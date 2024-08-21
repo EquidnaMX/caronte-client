@@ -1,0 +1,36 @@
+{
+  "name": "gruelasjr/caronte-client",
+  "description": "Library package for using caronte authentication",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Gabriel Ruelas",
+      "email": "gruelasjr@gmail.com"
+    }
+  ],
+  "require": {
+    "php": "^8.0",
+    "illuminate/support": "^11.21"
+  },
+  "require-dev": {
+    "illuminate/support": "^11.21",
+    "laravel/helpers": "^1.7",
+    "laravel/framework": "^11.21"
+  },
+  "autoload": {
+    "psr-4": {
+      "Gruelas\\Caronte\\": "src/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Gruelas\\Caronte\\CaronteServiceProvider"
+      ],
+      "aliases": {
+        "Caronte": "Gruelas\\Caronte\\Facades\\Caronte"
+      }
+    }
+  }
+}
