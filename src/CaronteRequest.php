@@ -2,12 +2,14 @@
 
 namespace Gruelas\Caronte;
 
-use Illuminate\Http\Client\RequestException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Http;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Http;
 use Gruelas\Caronte\Tools\RouteHelper;
+use Gruelas\Caronte\Tools\ResponseHelper;
 use Exception;
 
 class CaronteRequest
@@ -17,7 +19,7 @@ class CaronteRequest
         //ONLY STATIC METHODS ALLOWED
     }
 
-    public static function userPasswordLogin(Request $request): Response
+    public static function userPasswordLogin(Request $request): Response|RedirectResponse
     {
         $decoded_url  = base64_decode($request->callback_url);
 
@@ -28,7 +30,7 @@ class CaronteRequest
         }
 
         try {
-            $caronte_response = HTTP::post(
+            $caronte_response = HTTP::withOptions(['verify' => false])->post(
                 config('caronte.URL') . 'api/login',
                 [
                     'email'    => $request->email,
@@ -54,7 +56,10 @@ class CaronteRequest
             CaronteToken::setFileToken(token_id: $token_id, token_str: $token_str);
             CaronteToken::setCookie(token_id: $token_id);
         } catch (Exception $e) {
-            return CaronteHelper::badRequest($e->getMessage());
+            return ResponseHelper::badRequest(
+                request: $request,
+                message: $e->getMessage()
+            );
         }
 
         return redirect($callback_url)->with(['success' => 'Sesión iniciada con éxito']);

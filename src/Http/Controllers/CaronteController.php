@@ -8,6 +8,12 @@ use Gruelas\Caronte\CaronteRequest;
 
 class CaronteController extends Controller
 {
+    /**
+     * Displays the login form.
+     *
+     * @param \Illuminate\Http\Request $request The HTTP request object.
+     * @return \Illuminate\Contracts\View\View The login form view.
+     */
     public function loginForm(Request $request)
     {
         $login_view = config('caronte.USE_2FA') ? '2fa_login' : 'login';
