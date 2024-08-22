@@ -10,9 +10,7 @@ class CaronteServiceProvider extends ServiceProvider
     {
         $this->app->singleton(
             Caronte::class,
-            function ($app) {
-                return new Caronte();
-            }
+            fn() => new Caronte()
         );
 
         $this->mergeConfigFrom(__DIR__ . '/config/caronte.php', 'caronte');
