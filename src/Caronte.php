@@ -2,6 +2,9 @@
 
 namespace Gruelas\Caronte;
 
+use stdClass;
+use Exception;
+
 class Caronte
 {
     public function __construct()
@@ -9,6 +12,8 @@ class Caronte
         //
     }
 
+
+    
 
     /**
      * Get the user object from the request.

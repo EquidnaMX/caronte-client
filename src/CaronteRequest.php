@@ -40,7 +40,6 @@ class CaronteRequest
             );
 
             if ($caronte_response->failed()) {
-                //TODO VALIDATE IF EXCEPTION IS THROWN OR ONLY A BAD REQUEST IS RETURNED
                 throw new RequestException(response: $caronte_response);
             }
 

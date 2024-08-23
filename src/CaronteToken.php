@@ -2,14 +2,6 @@
 
 namespace Gruelas\Caronte;
 
-use App\Classes\Application\Application as ApplicationClass;
-use App\Classes\Token\Token;
-
-use App\Models\Application;
-use App\Models\User;
-
-use App\Http\Middleware\Auth\ValidationResponse;
-
 use Lcobucci\JWT\Validation\RequiredConstraintsViolated;
 use Lcobucci\JWT\Validation\Constraint\StrictValidAt;
 use Lcobucci\JWT\Validation\Constraint\SignedWith;
@@ -27,26 +19,14 @@ use Exception;
 
 class CaronteToken
 {
+    public const COOKIE_NAME = 'caronte_token';
+
     /**
      * Create a new class instance.
      */
-    private function __construct(private string $signing_key)
+    private function __construct()
     {
         //
-    }
-
-    public const COOKIE_NAME = 'caronte_token';
-
-
-    /**
-     * Create a new instance with a specified signing key for JWT validation.
-     *
-     * @param string $signing_key The signing key to be used for JWT validation.
-     * @return static A new instance of the class with the signing key set.
-     */
-    public static function setSigningKey(string $signing_key): static
-    {
-        return new static($signing_key);
     }
 
     /**
@@ -58,40 +38,32 @@ class CaronteToken
      */
     public static function validateToken(string $raw_token): ValidationResponse
     {
-        $token     = static::decodeToken(raw_token: $raw_token);
+        $config = static::getConfig(signing_key: config('caronte.APP_SECRET'));
+        $token  = static::decodeToken(config: $config, raw_token: $raw_token);
 
         try {
-            $application = Application::where('cn', $token->claims()->get('sub'))->firstOrFail();
-            $application = ApplicationClass::fromModel($application);
-        } catch (Exception $e) {
-            throw new Exception('Subject not found', 404);
-        }
-
-        $caronte_token = static::setSigningKey($application->getSigningKey());
-
-        $config    = $caronte_token->getConfig();
-        $validator = $config->validator();
-
-        try {
-            if (config('caronte.ENFORCE_ISSUER')) {
-                $validator->assert($token, new IssuedBy(config('caronte.ISSUER_ID')));
-            }
-
-            $validator->assert($token, new SignedWith(...$caronte_token->getSignerData()));
+            $config->validator()->assert(
+                $token,
+                ...static::getConstraints(config: $config)
+            );
         } catch (RequiredConstraintsViolated $e) {
             throw new Exception($e->getMessage(), 401);
         }
 
         try {
-            $validator->assert($token, new StrictValidAt(SystemClock::fromUTC()));
+            $config->validator()->assert(
+                $token,
+                new StrictValidAt(SystemClock::fromUTC())
+            );
 
-            $user    = json_decode($token->claims()->get('user'));
-            $headers = ['caronte_token' => $token->toString()]; # TODO add token ¿?
+            $user    = json_decode($token->claims['user']);
+            $headers = [
+                'caronte_token' => $token->toString()
+            ];
         } catch (RequiredConstraintsViolated $e) {
             $new_token_str = static::exchangeToken(raw_token: $raw_token);
-            $new_token     = static::decodeToken(raw_token: $new_token_str);
-
-            $user = json_decode($new_token->claims()->get('user'));
+            $new_token     = static::decodeToken(config: $config, raw_token: $new_token_str);
+            $user          = json_decode($new_token->claims['user']);
             $headers = [
                 'caronte_token' => $new_token_str
             ];
@@ -110,9 +82,11 @@ class CaronteToken
     public static function exchangeToken(string $raw_token): string
     {
         try {
-            $caronte_response = Http::withHeaders([
-                'Authorization' => 'Bearer ' . $raw_token,
-            ])->get(config('caronte.URL') . 'api/tokens/exchange');
+            $caronte_response = Http::withHeaders(
+                [
+                    'Authorization' => 'Bearer ' . $raw_token,
+                ]
+            )->get(config('caronte.URL') . 'api/tokens/exchange');
 
             if ($caronte_response->failed()) {
                 throw new RequestException($caronte_response);
@@ -134,14 +108,32 @@ class CaronteToken
         }
     }
 
+
     /**
-     * Decodes the provided raw token.
+     * Retrieves the configuration for generating a JWT token
      *
-     * @param string $raw_token The raw token string to decode.
-     * @return JWTToken The decoded Token instance.
-     * @throws Exception If the token is invalid or not provided.
+     * @param string $signing_key The signing key used for generating the token.
+     * @return Configuration The configuration object for generating the token.
      */
-    public static function decodeToken(string $raw_token): JWTToken
+    public static function getConfig(string $signing_key): Configuration
+    {
+        $config = Configuration::forSymmetricSigner(
+            new Sha256(),
+            InMemory::plainText($signing_key)
+        );
+
+        return $config;
+    }
+
+    /**
+     * Decodes a JWT token.
+     *
+     * @param Configuration $config The configuration object.
+     * @param string $raw_token The raw token to decode.
+     * @return JWTToken The decoded JWT token.
+     * @throws Exception If the token is not provided, is malformed, or is invalid.
+     */
+    public static function decodeToken(Configuration $config, string $raw_token): JWTToken
     {
         if (empty($raw_token)) {
             throw new Exception('Token not provided', 400);
@@ -151,14 +143,45 @@ class CaronteToken
             throw new Exception('Malformed token', 400);
         }
 
-        $token = Token::parseToken(token_str: $raw_token);
+        $token = $config->parser()->parse($raw_token);
 
-        if (!$token->claims()->has('user')) {
+        if (!isset($token->claims['user'])) {
             throw new Exception('Invalid token', 401);
         }
 
         return $token;
     }
+
+    /**
+     * Retrieves the constraints for validating a JWT token.
+     *
+     * @param Configuration $config The configuration object.
+     * @return array The array of validation constraints.
+     */
+    public static function getConstraints(Configuration $config): array
+    {
+        $constraints = [];
+
+        if (config('caronte.ENFORCE_ISSUER')) {
+            $constraints[] = new IssuedBy(config('caronte.ISSUER_ID'));
+        }
+
+        $constraints[] = new SignedWith($config->signer(), $config->signingKey());
+
+        return $config->validationConstraints(
+            $constraints
+        );
+    }
+
+
+
+
+
+
+
+
+
+
 
     /**
      * Remove the Caronte token from the cookie and local storage.
@@ -224,39 +247,5 @@ class CaronteToken
     public static function setFileToken(null|string $token_id, string $token_str): void
     {
         Storage::disk('local')->put('tokens/' . $token_id, $token_str);
-    }
-
-    /**
-     * Get the JWT configuration for token validation.
-     *
-     * @return Configuration The JWT configuration instance.
-     */
-    public function getConfig(): Configuration
-    {
-        $config = Configuration::forSymmetricSigner(...$this->getSignerData());
-        return $config;
-    }
-
-    /**
-     * Get the signer data used for JWT token validation.
-     *
-     * @return array An array containing the signer and signing key.
-     */
-    public function getSignerData(): array
-    {
-        return [
-            new Sha256(),
-            $this->getSigningKey()
-        ];
-    }
-
-    /**
-     * Get the signing key used for JWT token validation.
-     *
-     * @return InMemory The signing key for JWT validation.
-     */
-    public function getSigningKey(): InMemory
-    {
-        return InMemory::plainText($this->signing_key);
     }
 }
