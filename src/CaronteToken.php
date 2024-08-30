@@ -34,7 +34,7 @@ class CaronteToken
                 ...static::getConstraints()
             );*/
         } catch (RequiredConstraintsViolated $e) {
-            throw new Exception($e->getMessage(), 401);
+            throw new Exception($e->getMessage());
         }
 
         try {
@@ -66,10 +66,14 @@ class CaronteToken
                 throw new RequestException($caronte_response);
             }
 
-            return static::validateToken(raw_token: $caronte_response->body());
+            $token = static::validateToken($caronte_response->body());
+
+            Caronte::setTokenWasExchanged();
+
+            return $token;
         } catch (RequestException $e) {
             Caronte::clearToken();
-            throw new Exception('Cannot exchange token', 400);
+            throw new Exception('Cannot exchange token');
         }
     }
 

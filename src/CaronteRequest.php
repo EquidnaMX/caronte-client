@@ -35,7 +35,7 @@ class CaronteRequest
                     'verify' => !config('caronte.ALLOW_HTTP_REQUESTS')
                 ]
             )->post(
-                config('caronte.URL') . 'api/login',
+                config('caronte.URL') . 'api/v2/login',
                 [
                     'email'    => $request->email,
                     'password' => $request->password,
@@ -47,14 +47,14 @@ class CaronteRequest
                 throw new RequestException(response: $caronte_response);
             }
 
-            $token_str = $caronte_response->body();
-            $token  = CaronteToken::validateToken(raw_token: $token_str);
+            $token  = CaronteToken::validateToken(raw_token: $caronte_response->body());
         } catch (Exception $e) {
+            dd($e->getMessage());
             return ResponseHelper::badRequest(message: $e->getMessage());
         }
 
         if (RouteHelper::isAPI()) {
-            return response($token_str, 200);
+            return response($token->toString(), 200);
         }
 
         Caronte::saveToken($token->toString());
@@ -114,14 +114,13 @@ class CaronteRequest
                 throw new RequestException($caronte_response);
             }
 
-            $token_str = $caronte_response->body();
-            $token = CaronteToken::validateToken(raw_token: $token_str);
+            $token = CaronteToken::validateToken(raw_token: $caronte_response->body());
         } catch (RequestException $e) {
             return ResponseHelper::badRequest($e->getMessage());
         }
 
         if (RouteHelper::isAPI()) {
-            return response($token_str, 200);
+            return response($token->toString(), 200);
         }
 
         Caronte::saveToken($token->toString());
@@ -138,7 +137,7 @@ class CaronteRequest
                 ]
             )->withHeaders(
                 [
-                    'Authorization' => "Bearer " . Caronte::getToken()
+                    'Authorization' => "Bearer " . Caronte::getToken()->toString()
                 ]
             )->get(config('caronte.URL') . 'api/logout' . ($logout_all_sessions ? 'All' : ''));
 

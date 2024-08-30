@@ -33,4 +33,30 @@ class ResponseHelper
 
         return redirect($forward_url)->withErrors([$message])->withInput();
     }
+
+    public static function unautorized(string $message, string $forward_url = null): Response|RedirectResponse
+    {
+        if (RouteHelper::isAPI() || RouteHelper::isHook()) {
+            return response($message, 403);
+        }
+
+        if (is_null($forward_url)) {
+            return redirect(config('caronte.LOGIN_URL'))->withErrors([$message])->withInput();
+        }
+
+        return redirect($forward_url)->withErrors([$message])->withInput();
+    }
+
+    public static function forbidden(string $message, string $forward_url = null): Response|RedirectResponse
+    {
+        if (RouteHelper::isAPI() || RouteHelper::isHook()) {
+            return response($message, 403);
+        }
+
+        if (is_null($forward_url)) {
+            return back()->withErrors([$message])->withInput();
+        }
+
+        return redirect($forward_url)->withErrors([$message])->withInput();
+    }
 }

@@ -1,12 +1,11 @@
 <?php
 
-namespace App\Http\Middleware\Auth;
-
-use App\Classes\Caronte\CarontePermissionValidator;
-use App\Classes\Caronte\CaronteHelper;
+namespace Gruelas\Caronte\Http\Middleware;
 
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Http\Request;
+use Gruelas\Caronte\Tools\PermissionHelper;
+use Gruelas\Caronte\Tools\ResponseHelper;
 use Closure;
 
 class ValidateRoles
@@ -18,13 +17,11 @@ class ValidateRoles
      */
     public function handle(Request $request, Closure $next, ...$roles): Response
     {
-        if (CarontePermissionValidator::hasRoles(roles: $roles)) {
-            return $next($request);
+
+        if (!PermissionHelper::hasRoles(roles: $roles)) {
+            return ResponseHelper::forbidden('User does not have access access to this feature');
         }
 
-        CaronteHelper::handleFailedResponse(
-            'Insufficient permissions',
-            403
-        );
+        return $next($request);
     }
 }
