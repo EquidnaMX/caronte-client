@@ -14,33 +14,30 @@ class RouteHelper
     /**
      * Determine if the request is an API request.
      *
-     * @param Request $request
      * @return bool
      */
-    public static function isAPI(Request $request): bool
+    public static function isAPI(): bool
     {
-        return $request->is('api/*');
+        return request()->is('api/*');
     }
 
     /**
      * Determine if the request is a hook request.
      *
-     * @param Request $request
      * @return bool
      */
-    public static function isHook(Request $request): bool
+    public static function isHook(): bool
     {
-        return $request->is('hooks/*');
+        return request()->is('hooks/*');
     }
 
     /**
      * Determine if the request is an IoT request.
      *
-     * @param Request $request
      * @return bool
      */
-    public static function isIoT(Request $request): bool
+    public static function isIoT(): bool
     {
-        return $request->is('iot/*');
+        return request()->is('iot/*');
     }
 }

@@ -3,12 +3,12 @@
 namespace Gruelas\Caronte\Facades;
 
 use Illuminate\Support\Facades\Facade;
-use Gruelas\Caronte\Caronte as CaronteService;
+use Gruelas\Caronte\Caronte;
 
-class Caronte extends Facade
+class CaronteFacade extends Facade
 {
     protected static function getFacadeAccessor(): string
     {
-        return CaronteService::class;
+        return Caronte::class;
     }
 }

@@ -28,11 +28,8 @@
   "extra": {
     "laravel": {
       "providers": [
-        "Gruelas\\Caronte\\CaronteServiceProvider"
-      ],
-      "aliases": {
-        "Caronte": "Gruelas\\Caronte\\Facades\\Caronte"
-      }
+        "Gruelas\\Caronte\\Providers\\CaronteServiceProvider"
+      ]
     }
   }
 }

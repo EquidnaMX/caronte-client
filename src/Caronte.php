@@ -2,45 +2,38 @@
 
 namespace Gruelas\Caronte;
 
-use stdClass;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Cookie;
+use Lcobucci\JWT\Token\Plain;
+use Gruelas\Caronte\Tools\RouteHelper;
 use Exception;
+use stdClass;
 
 class Caronte
 {
+    public const COOKIE_NAME = 'caronte_token';
+
     public function __construct()
     {
         //
     }
 
-
-    
-
-    /**
-     * Get the user object from the request.
-     *
-     * @return stdClass The user object decoded from JSON or directly if already an object.
-     * @throws Exception If no user data is provided.
-     */
-    public static function getUser(): stdClass
+    public function getToken(): Plain
     {
-        $user = request()->get('user');
+        $token_str = RouteHelper::isAPI() ? request()->bearerToken() : $this->webToken();
 
-        if (is_null($user)) {
-            throw new Exception('No user provided');
+        if (is_null($token_str) || empty($token_str)) {
+            throw new Exception('Token not found', 401);
         }
 
-        return is_string($user) ? json_decode($user) : $user;
+        return CaronteToken::decodeToken(raw_token: $token_str);
     }
 
-    /**
-     * Get the hashed URI application identifier.
-     *
-     * @param string|null $application_id Optional application ID to hash.
-     * @return string The hashed URI application identifier.
-     */
-    public static function getUriApplication(string $application_id = null): string
+    public function getUser(): stdClass
     {
-        return sha1($application_id ?? config('caronte.APP_ID'));
+        return json_decode($this->getToken()->claims()->get('user'));
     }
 
     /**
@@ -53,67 +46,45 @@ class Caronte
         return request()->route('uri_user') ?: '';
     }
 
-    /**
-     * Get the login fail URL with callback.
-     *
-     * @return string The login fail URL with encoded callback URL.
-     */
-    public static function getFailURL(): string
+    public function saveToken(string $token_str): void
     {
-        return config('caronte.LOGIN_URL') . '?callback_url=' . base64_encode(request()->url());
+        $token_id = Str::random(20);
+
+        Cookie::queue(Cookie::forever(static::COOKIE_NAME, $token_id));
+        Storage::disk('local')->put('tokens/' . $token_id, $token_str);
     }
 
-    /**
-     * Handle a failed response, either for API or web requests.
-     *
-     * @param string $apiMessage The message for API response. Default is an empty string
-     * @param int $statusCode The HTTP status code. Default is 400
-     * @return void
-     * @throws HttpResponseException
-     */
-    public static function handleFailedResponse(string $message = '', int $statusCode = 400): void
+    public function clearToken(): void
     {
-        if (CaronteHelper::isAPI()) {
-            throw new HttpResponseException(response($message, $statusCode));
-        }
-
-        throw new HttpResponseException(back()->with('error', $message));
+        $this->forgetCookie();
     }
 
-    /**
-     * Get user metadata by key.
-     *
-     * @param stdClass $user
-     * @param string $key
-     * @return mixed
-     */
-    public static function getUserMetadata(stdClass $user, string $key): mixed
+    public function echo(string $message): string
     {
-        return $user->metadata->pluck('value', 'key')->get($key);
+        return $message;
     }
 
-    /**
-     * Check if the user has specified roles.
-     *
-     * @param mixed $roles
-     * @return bool
-     */
-    public static function userHasRoles(mixed $roles): bool
-    {
-        return CarontePermissionValidator::hasRoles(roles: $roles);
-    }
 
     /**
      * Get the web token from storage.
      *
      * @return null|string
      */
-    public static function webToken(): null|string
+    private function webToken(): null|string
     {
-        if (Storage::disk('local')->exists('tokens/' . Cookie::get(CaronteToken::COOKIE_NAME))) {
-            return Storage::disk('local')->get('tokens/' . Cookie::get(CaronteToken::COOKIE_NAME));
+        if (Storage::disk('local')->exists('tokens/' . Cookie::get(static::COOKIE_NAME))) {
+            return Storage::disk('local')->get('tokens/' . Cookie::get(static::COOKIE_NAME));
         }
 
         return "";
+    }
+
+    private function forgetCookie(): void
+    {
+        if (Storage::disk('local')->exists('tokens/' . Cookie::get(static::COOKIE_NAME))) {
+            Storage::disk('local')->delete('tokens/' . Cookie::get(static::COOKIE_NAME));
+        }
+
+        Cookie::queue(Cookie::forget(static::COOKIE_NAME));
     }
 }

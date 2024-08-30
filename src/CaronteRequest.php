@@ -6,10 +6,10 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Client\RequestException;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Http;
 use Gruelas\Caronte\Tools\RouteHelper;
 use Gruelas\Caronte\Tools\ResponseHelper;
+use Caronte;
 use Exception;
 
 class CaronteRequest
@@ -30,7 +30,11 @@ class CaronteRequest
         }
 
         try {
-            $caronte_response = HTTP::withOptions(['verify' => false])->post(
+            $caronte_response = HTTP::withOptions(
+                [
+                    'verify' => !config('caronte.ALLOW_HTTP_REQUESTS')
+                ]
+            )->post(
                 config('caronte.URL') . 'api/login',
                 [
                     'email'    => $request->email,
@@ -44,22 +48,16 @@ class CaronteRequest
             }
 
             $token_str = $caronte_response->body();
-
-            CaronteToken::validateToken(raw_token: $token_str); //TODO
-
-            if (RouteHelper::isAPI(request: $request)) {
-                return response($token_str, 200);
-            }
-
-            $token_id = Str::random(20);
-            CaronteToken::setFileToken(token_id: $token_id, token_str: $token_str);
-            CaronteToken::setCookie(token_id: $token_id);
+            $token  = CaronteToken::validateToken(raw_token: $token_str);
         } catch (Exception $e) {
-            return ResponseHelper::badRequest(
-                request: $request,
-                message: $e->getMessage()
-            );
+            return ResponseHelper::badRequest(message: $e->getMessage());
         }
+
+        if (RouteHelper::isAPI()) {
+            return response($token_str, 200);
+        }
+
+        Caronte::saveToken($token->toString());
 
         return redirect($callback_url)->with(['success' => 'Sesión iniciada con éxito']);
     }
@@ -67,13 +65,17 @@ class CaronteRequest
     public static function twoFactorTokenRequest(Request $request)
     {
         try {
-            $caronte_response = HTTP::post(
+            $caronte_response = HTTP::withOptions(
+                [
+                    'verify' => !config('caronte.ALLOW_HTTP_REQUESTS')
+                ]
+            )->post(
                 config('caronte.URL') . 'api/2fa',
                 [
                     'application_url' => config('app.url'),
-                    'callback_url'    => $request->callback_url,
                     'app_id'          => config('caronte.APP_ID'),
-                    'email'           => $request->email,
+                    'callback_url'    => $request->callback_url,
+                    'email'           => $request->email
                 ]
             );
 
@@ -81,13 +83,13 @@ class CaronteRequest
                 throw new RequestException($caronte_response);
             }
 
-            if (CaronteHelper::isAPI()) {
+            if (RouteHelper::isAPI()) {
                 return response("Authentication email sent to " . $request->email, 200);
             }
 
             return back()->with(['success' => $caronte_response->body()]);
         } catch (Exception $e) {
-            return CaronteHelper::badRequest($e->getMessage());
+            return ResponseHelper::badRequest($e->getMessage());
         }
     }
 
@@ -102,38 +104,41 @@ class CaronteRequest
         }
 
         try {
-            $caronte_response = HTTP::get(config('caronte.URL') . 'api/2fa/' . $token);
+            $caronte_response = HTTP::withOptions(
+                [
+                    'verify' => !config('caronte.ALLOW_HTTP_REQUESTS')
+                ]
+            )->get(config('caronte.URL') . 'api/2fa/' . $token);
 
             if ($caronte_response->failed()) {
                 throw new RequestException($caronte_response);
             }
 
             $token_str = $caronte_response->body();
-
-            CaronteToken::validateToken(raw_token: $token_str);
-
-            if (CaronteHelper::isAPI()) {
-                return response($token_str, 200);
-            }
-
-            $token_id = Str::random(20);
-            CaronteToken::setFileToken(token_id: $token_id, token_str: $token_str);
-            CaronteToken::setCookie(token_id: $token_id);
+            $token = CaronteToken::validateToken(raw_token: $token_str);
         } catch (RequestException $e) {
-            return CaronteHelper::badRequest($e->getMessage());
+            return ResponseHelper::badRequest($e->getMessage());
         }
+
+        if (RouteHelper::isAPI()) {
+            return response($token_str, 200);
+        }
+
+        Caronte::saveToken($token->toString());
 
         return redirect($callback_url)->with('success', 'Sesión iniciada con éxito');
     }
 
     public static function logout(Request $request, $logout_all_sessions = false)
     {
-        $token_str = CaronteHelper::webToken();
-
         try {
-            $caronte_response = HTTP::withHeaders(
+            $caronte_response = HTTP::withOptions(
                 [
-                    'Authorization' => "Bearer " . $token_str
+                    'verify' => !config('caronte.ALLOW_HTTP_REQUESTS')
+                ]
+            )->withHeaders(
+                [
+                    'Authorization' => "Bearer " . Caronte::getToken()
                 ]
             )->get(config('caronte.URL') . 'api/logout' . ($logout_all_sessions ? 'All' : ''));
 
@@ -146,7 +151,11 @@ class CaronteRequest
             $response_array = ['error' => $e->getMessage()];
         }
 
-        CaronteToken::forgetCookie();
+        Caronte::clearToken();
+
+        if (RouteHelper::isAPI()) {
+            return response('Logout complete', 200);
+        }
 
         return redirect(config('caronte.LOGIN_URL'))->with($response_array);
     }
