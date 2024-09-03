@@ -1,12 +1,12 @@
 {
-  "name": "gruelasjr/caronte-client",
-  "description": "Library package for using caronte authentication",
+  "name": "equidna/caronte-client",
+  "description": "Library package for caronte authentication",
   "type": "library",
   "license": "MIT",
   "authors": [
     {
       "name": "Gabriel Ruelas",
-      "email": "gruelasjr@gmail.com"
+      "email": "gruelas@gruelas.com"
     }
   ],
   "require": {
@@ -22,13 +22,13 @@
   },
   "autoload": {
     "psr-4": {
-      "Gruelas\\Caronte\\": "src/"
+      "Equidna\\Caronte\\": "src/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Gruelas\\Caronte\\Providers\\CaronteServiceProvider"
+        "Equidna\\Caronte\\Providers\\CaronteServiceProvider"
       ]
     }
   }

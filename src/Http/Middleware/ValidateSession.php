@@ -1,12 +1,12 @@
 <?php
 
-namespace Gruelas\Caronte\Http\Middleware;
+namespace Equidna\Caronte\Http\Middleware;
 
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Http\Request;
-use Gruelas\Caronte\Tools\ResponseHelper;
-use Gruelas\Caronte\Tools\RouteHelper;
-use Gruelas\Caronte\Tools\PermissionHelper;
+use Equidna\Caronte\Tools\ResponseHelper;
+use Equidna\Caronte\Tools\RouteHelper;
+use Equidna\Caronte\Tools\PermissionHelper;
 use Exception;
 use Closure;
 use Caronte;
@@ -15,6 +15,7 @@ class ValidateSession
 {
     public function handle(Request $request, Closure $next): Response
     {
+        dd("ValidateSession");
         try {
             $token = Caronte::getToken();
         } catch (Exception $e) {

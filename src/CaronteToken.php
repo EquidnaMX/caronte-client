@@ -1,6 +1,6 @@
 <?php
 
-namespace Gruelas\Caronte;
+namespace Equidna\Caronte;
 
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;

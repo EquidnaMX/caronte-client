@@ -1,6 +1,6 @@
 <?php
 
-namespace Gruelas\Caronte\Tools;
+namespace Equidna\Caronte\Tools;
 
 use Illuminate\Http\Request;
 

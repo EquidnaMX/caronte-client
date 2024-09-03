@@ -1,9 +1,9 @@
 <?php
 
-namespace Gruelas\Caronte\Facades;
+namespace Equidna\Caronte\Facades;
 
 use Illuminate\Support\Facades\Facade;
-use Gruelas\Caronte\Caronte;
+use Equidna\Caronte\Caronte;
 
 class CaronteFacade extends Facade
 {

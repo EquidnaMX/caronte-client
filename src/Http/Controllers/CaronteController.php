@@ -1,10 +1,10 @@
 <?php
 
-namespace Gruelas\Caronte\Http\Controllers;
+namespace Equidna\Caronte\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Gruelas\Caronte\CaronteRequest;
+use Equidna\Caronte\CaronteRequest;
 
 class CaronteController extends Controller
 {

@@ -1,14 +1,14 @@
 <?php
 
-namespace Gruelas\Caronte;
+namespace Equidna\Caronte;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
-use Gruelas\Caronte\Tools\RouteHelper;
-use Gruelas\Caronte\Tools\ResponseHelper;
+use Equidna\Caronte\Tools\RouteHelper;
+use Equidna\Caronte\Tools\ResponseHelper;
 use Caronte;
 use Exception;
 
@@ -42,6 +42,8 @@ class CaronteRequest
                     'app_id'   => config('caronte.APP_ID')
                 ]
             );
+
+
 
             if ($caronte_response->failed()) {
                 throw new RequestException(response: $caronte_response);

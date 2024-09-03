@@ -1,12 +1,12 @@
 <?php
 
-namespace Gruelas\Caronte;
+namespace Equidna\Caronte;
 
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Cookie;
 use Lcobucci\JWT\Token\Plain;
-use Gruelas\Caronte\Tools\RouteHelper;
+use Equidna\Caronte\Tools\RouteHelper;
 use Exception;
 use stdClass;
 

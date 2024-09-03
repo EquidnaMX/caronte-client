@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Gruelas\Caronte\Http\Controllers\CaronteController;
+use Equidna\Caronte\Http\Controllers\CaronteController;
 
 //* Caronte
 Route::get('/login', [CaronteController::class, 'loginForm'])->name('caronte.login');
