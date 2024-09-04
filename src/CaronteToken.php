@@ -13,7 +13,7 @@ use Lcobucci\JWT\Validation\Constraint\StrictValidAt;
 use Lcobucci\JWT\Validation\Constraint\SignedWith;
 use Lcobucci\JWT\Validation\Constraint\IssuedBy;
 use Lcobucci\Clock\SystemClock;
-use Caronte;
+use Equidna\Caronte\Facades\Caronte;
 use Exception;
 
 class CaronteToken

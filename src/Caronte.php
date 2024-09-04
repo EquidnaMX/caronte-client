@@ -66,7 +66,6 @@ class Caronte
     public function saveToken(string $token_str): void
     {
         $token_id = Str::random(20);
-
         Cookie::queue(Cookie::forever(static::COOKIE_NAME, $token_id));
         Storage::disk('local')->put('tokens/' . $token_id, $token_str);
     }

@@ -27,6 +27,13 @@ class CaronteController extends Controller
             );
     }
 
+    /**
+     * Logs in the user.
+     *
+     * @param \Illuminate\Http\Request $request The HTTP request object.
+     *
+     * @return mixed The response from the login process.
+     */
     public function login(Request $request)
     {
         if (config('caronte.USE_2FA')) {

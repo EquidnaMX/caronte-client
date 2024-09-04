@@ -2,6 +2,7 @@
 
 namespace Equidna\Caronte\Tools;
 
+use Equidna\Caronte\Facades\Caronte;
 use Exception;
 
 class PermissionHelper
@@ -22,6 +23,7 @@ class PermissionHelper
     public static function hasApplication(): bool
     {
         $user = Caronte::getUser();
+        $uri_application = sha1(config('caronte.APP_ID'));
 
         if (is_null($user)) {
             throw new Exception('No user provided');
@@ -30,19 +32,21 @@ class PermissionHelper
         $roles = collect($user->roles);
 
         return $roles->contains(
-            fn($role) => $role->uri_application === config('caronte.APP_ID')
+            fn($role) => $role->uri_application === $uri_application
+
         );
     }
 
     /**
      * Check if the user has any of the specified roles for a given application.
      *
-     * @param mixed $roles Roles to check (comma-separated string or array).     
+     * @param mixed $roles Roles to check (comma-separated string or array).
      * @return bool True if the user has any of the specified roles, false otherwise.
      */
     public static function hasRoles(mixed $roles): bool
     {
         $user = Caronte::getUser();
+        $uri_application = sha1(config('caronte.APP_ID'));
 
         if (is_null($user)) {
             throw new Exception('No user provided');
@@ -62,7 +66,7 @@ class PermissionHelper
         $roles_collection = collect($user->roles);
 
         return $roles_collection->contains(
-            fn($user_role) => in_array($user_role->name, $roles) && config('caronte.APP_ID') === $user_role->uri_application
+            fn($user_role) => in_array($user_role->name, $roles) && $uri_application === $user_role->uri_application
         );
     }
 }

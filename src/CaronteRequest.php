@@ -9,8 +9,9 @@ use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
 use Equidna\Caronte\Tools\RouteHelper;
 use Equidna\Caronte\Tools\ResponseHelper;
-use Caronte;
+use Equidna\Caronte\Facades\Caronte;
 use Exception;
+use Illuminate\Support\Facades\Cookie;
 
 class CaronteRequest
 {
@@ -51,7 +52,6 @@ class CaronteRequest
 
             $token  = CaronteToken::validateToken(raw_token: $caronte_response->body());
         } catch (Exception $e) {
-            dd($e->getMessage());
             return ResponseHelper::badRequest(message: $e->getMessage());
         }
 

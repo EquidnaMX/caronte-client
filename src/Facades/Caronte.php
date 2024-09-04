@@ -3,9 +3,9 @@
 namespace Equidna\Caronte\Facades;
 
 use Illuminate\Support\Facades\Facade;
-use Equidna\Caronte\Caronte;
+use Equidna\Caronte\Caronte as CaronteClass;
 
-class CaronteFacade extends Facade
+class Caronte extends Facade
 {
     /**
      * Get the accessor for the facade.
@@ -14,6 +14,6 @@ class CaronteFacade extends Facade
      */
     protected static function getFacadeAccessor(): string
     {
-        return Caronte::class;
+        return CaronteClass::class;
     }
 }
