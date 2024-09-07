@@ -43,11 +43,24 @@ class CaronteController extends Controller
         return CaronteRequest::userPasswordLogin(request: $request);
     }
 
+    /**
+     * Logs in the user using a two-factor authentication token.
+     *
+     * @param \Illuminate\Http\Request $request The HTTP request object.
+     * @param string $token The two-factor authentication token.
+     * @return mixed The result of the two-factor token login request.
+     */
     public function twoFactorTokenLogin(Request $request, $token)
     {
         return CaronteRequest::twoFactorTokenLogin(request: $request, token: $token);
     }
 
+    /**
+     * Logout the user.
+     *
+     * @param \Illuminate\Http\Request $request The HTTP request instance.
+     * @return \Illuminate\Http\Response
+     */
     public function logout(Request $request)
     {
         return CaronteRequest::logout(

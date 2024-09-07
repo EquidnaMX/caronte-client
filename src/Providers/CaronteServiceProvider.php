@@ -2,9 +2,9 @@
 
 namespace Equidna\Caronte\Providers;
 
-use Illuminate\Support\ServiceProvider;
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Routing\Router;
+use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Route;
 use Equidna\Caronte\Caronte;
 
@@ -30,9 +30,11 @@ class CaronteServiceProvider extends ServiceProvider
         $router->aliasMiddleware('Caronte.ValidateSession', \Equidna\Caronte\Http\Middleware\ValidateSession::class);
         $router->aliasMiddleware('Caronte.ValidateRoles', \Equidna\Caronte\Http\Middleware\ValidateRoles::class);
 
-        Route::middleware(['web'])->group(function () {
-            $this->loadRoutesFrom(__DIR__ . '/../routes/web.php');
-        });
+        Route::middleware(['web'])->group(
+            function () {
+                $this->loadRoutesFrom(__DIR__ . '/../routes/web.php');
+            }
+        );
 
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'caronte');
         $this->loadMigrationsFrom(__DIR__ . '/../migrations');
@@ -42,7 +44,9 @@ class CaronteServiceProvider extends ServiceProvider
             [
                 __DIR__ . '/../resources/views' => resource_path('views/vendor/caronte'),
             ],
-            'views'
+            [
+                'views',
+            ]
         );
 
         //Assets
@@ -50,7 +54,9 @@ class CaronteServiceProvider extends ServiceProvider
             [
                 __DIR__ . '/../resources/assets' => public_path('vendor/caronte'),
             ],
-            'assets'
+            [
+                'assets',
+            ]
         );
 
         //Migrations
@@ -58,7 +64,9 @@ class CaronteServiceProvider extends ServiceProvider
             [
                 __DIR__ . '/../migrations' => database_path('migrations'),
             ],
-            'migrations'
+            [
+                'migrations'
+            ]
         );
     }
 }

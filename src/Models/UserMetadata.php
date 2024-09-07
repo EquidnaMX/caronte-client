@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace Equidna\Caronte\Models;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
