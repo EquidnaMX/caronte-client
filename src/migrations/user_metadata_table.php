@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('key', 45);
             $table->string('value', 45);
             $table->string('scope', 128);
+            $table->engine('MyISAM');
             $table->primary(['uri_user', 'key']);
         });
     }

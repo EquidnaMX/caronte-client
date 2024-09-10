@@ -6,8 +6,8 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Cookie;
 use Lcobucci\JWT\Token\Plain;
-use Equidna\Toolkit\Helpers\RouteHelper;
 use Equidna\Caronte\Models\CaronteUser;
+use Equidna\Toolkit\Helpers\RouteHelper;
 use Exception;
 use stdClass;
 
