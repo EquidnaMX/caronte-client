@@ -1,9 +1,18 @@
 <?php
 
+/**
+ * @author Gabriel Ruelas
+ * @license MIT
+ * @version 1.0.0
+ */
+
 namespace Equidna\Caronte\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Response;
 use Equidna\Caronte\CaronteRequest;
 
 class CaronteController extends Controller
@@ -14,7 +23,7 @@ class CaronteController extends Controller
      * @param \Illuminate\Http\Request $request The HTTP request object.
      * @return \Illuminate\Contracts\View\View The login form view.
      */
-    public function loginForm(Request $request)
+    public function loginForm(Request $request): View
     {
         $login_view = config('caronte.USE_2FA') ? '2fa_login' : 'login';
 
@@ -30,11 +39,11 @@ class CaronteController extends Controller
     /**
      * Logs in the user.
      *
-     * @param \Illuminate\Http\Request $request The HTTP request object.
+     * @param Request $request The HTTP request object.
      *
-     * @return mixed The response from the login process.
+     * @return Response|RedirectResponse The response object or a redirect response.
      */
-    public function login(Request $request)
+    public function login(Request $request): Response|RedirectResponse
     {
         if (config('caronte.USE_2FA')) {
             return CaronteRequest::twoFactorTokenRequest(request: $request);
@@ -48,9 +57,9 @@ class CaronteController extends Controller
      *
      * @param \Illuminate\Http\Request $request The HTTP request object.
      * @param string $token The two-factor authentication token.
-     * @return mixed The result of the two-factor token login request.
+     * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse The HTTP response or a redirect response.
      */
-    public function twoFactorTokenLogin(Request $request, $token)
+    public function twoFactorTokenLogin(Request $request, $token): Response|RedirectResponse
     {
         return CaronteRequest::twoFactorTokenLogin(request: $request, token: $token);
     }
@@ -58,10 +67,10 @@ class CaronteController extends Controller
     /**
      * Logout the user.
      *
-     * @param \Illuminate\Http\Request $request The HTTP request instance.
-     * @return \Illuminate\Http\Response
+     * @param \Illuminate\Http\Request $request
+     * @return \Symfony\Component\HttpFoundation\Response|\Illuminate\Http\RedirectResponse
      */
-    public function logout(Request $request)
+    public function logout(Request $request): Response|RedirectResponse
     {
         return CaronteRequest::logout(
             request: $request,

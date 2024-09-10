@@ -1,15 +1,20 @@
 <?php
 
+/**
+ * @author Gabriel Ruelas
+ * @license MIT
+ * @version 1.0.0
+ *
+ */
+
 namespace Equidna\Caronte\Models;
 
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Equidna\Caronte\Models\UserMetadata;
 
-class User extends Model
+class CaronteUser extends Model
 {
     protected $table      = 'Users';
     protected $primaryKey = 'uri_user';
@@ -18,32 +23,17 @@ class User extends Model
     public $timestamps   = false;
     public $incrementing = false;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
-        'name',
-        'email',
-        'password',
-        'uri_parent',
         'uri_user',
-        'forceTwoFactor',
+        'name',
+        'email'
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
-    protected $hidden = [
-        'password',
-    ];
+    protected $hidden = [];
 
     public function metadata(): HasMany
     {
-        return $this->hasMany(UserMetadata::class, 'uri_user');
+        return $this->hasMany(CaronteUserMetadata::class, 'uri_user');
     }
 
     public function setNameAttribute(string $value): void

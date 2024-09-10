@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * @author Gabriel Ruelas
+ * @license MIT
+ * @version 1.0.0
+ * gruelas@gruelasjr
+ *
+ */
+
 namespace Equidna\Caronte\Providers;
 
 use Illuminate\Foundation\AliasLoader;
@@ -30,7 +38,7 @@ class CaronteServiceProvider extends ServiceProvider
         $router->aliasMiddleware('Caronte.ValidateSession', \Equidna\Caronte\Http\Middleware\ValidateSession::class);
         $router->aliasMiddleware('Caronte.ValidateRoles', \Equidna\Caronte\Http\Middleware\ValidateRoles::class);
 
-        Route::middleware(['web'])->group(
+        Route::Prefix(config('caronte.ROUTES_PREFIX'))->middleware(['web'])->group(
             function () {
                 $this->loadRoutesFrom(__DIR__ . '/../routes/web.php');
             }

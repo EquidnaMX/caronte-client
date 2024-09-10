@@ -4,15 +4,15 @@ namespace Equidna\Caronte;
 
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
+use Lcobucci\Clock\SystemClock;
+use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Signer\Key\InMemory;
 use Lcobucci\JWT\Signer\Hmac\Sha256;
 use Lcobucci\JWT\Token\Plain;
-use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Validation\RequiredConstraintsViolated;
 use Lcobucci\JWT\Validation\Constraint\StrictValidAt;
 use Lcobucci\JWT\Validation\Constraint\SignedWith;
 use Lcobucci\JWT\Validation\Constraint\IssuedBy;
-use Lcobucci\Clock\SystemClock;
 use Equidna\Caronte\Facades\Caronte;
 use Exception;
 
@@ -23,16 +23,23 @@ class CaronteToken
         //
     }
 
+    /**
+     * Validates a token.
+     *
+     * @param string $raw_token The raw token to validate.
+     * @return Plain The validated token.
+     * @throws Exception If the token fails the required constraints.
+     */
     public static function validateToken(string $raw_token): Plain
     {
         $config = static::getConfig();
         $token  = static::decodeToken(raw_token: $raw_token);
 
         try {
-            /*$config->validator()->assert(
+            $config->validator()->assert(
                 $token,
                 ...static::getConstraints()
-            );*/
+            );
         } catch (RequiredConstraintsViolated $e) {
             throw new Exception($e->getMessage());
         }
@@ -43,12 +50,23 @@ class CaronteToken
                 new StrictValidAt(SystemClock::fromUTC())
             );
 
+            if (config('caronte.UPDATE_LOCAL_USER')) {
+                Caronte::updateUserData($token->claims()->get('user'));
+            }
+
             return $token;
         } catch (RequiredConstraintsViolated $e) {
             return static::exchangeToken(raw_token: $raw_token);
         }
     }
 
+    /**
+     * Exchanges a raw token for a validated token using the Caronte API.
+     *
+     * @param string $raw_token The raw token to be exchanged.
+     * @return Plain The validated token.
+     * @throws Exception If the token exchange fails.
+     */
     public static function exchangeToken(string $raw_token): Plain
     {
         try {
@@ -116,9 +134,12 @@ class CaronteToken
      */
     public static function getConfig(): Configuration
     {
+
+        $signing_key = (config('caronte.VERSION') == 'v1') ? config('caronte.V1_TOKEN_KEY') : config('caronte.APP_SECRET');
+
         $config = Configuration::forSymmetricSigner(
             new Sha256(),
-            InMemory::plainText(config('caronte.APP_SECRET'))
+            InMemory::plainText($signing_key)
         );
 
         return $config;
@@ -134,54 +155,17 @@ class CaronteToken
     {
         $constraints = [];
 
+        $config = static::getConfig();
+
         if (config('caronte.ENFORCE_ISSUER')) {
             $constraints[] = new IssuedBy(config('caronte.ISSUER_ID'));
         }
 
-        //!TODO VALIDATE SIGNING
-        /* $constraints[] = new SignedWith(
+        $constraints[] = new SignedWith(
             $config->signer(),
             $config->signingKey()
-        );*/
+        );
 
         return $constraints;
-    }
-
-
-
-    /**
-     * Remove the Caronte token from the cookie and local storage.
-     *
-     * @return void
-     */
-
-
-    /**
-     * Update local user data.
-     *
-     * @param stdClass $user The user object containing updated data.
-     * @return void
-     */
-    public static function updateUserData($user): void
-    {
-        try {
-            $local_user = User::findOrFail($user->uri_user);
-        } catch (Exception $e) {
-            $local_user = User::create([
-                'uri_user' => $user->uri_user,
-                'email'    => $user->email,
-            ]);
-        }
-
-        $local_user->update(['name' => $user->name]);
-        $local_user->metadata()->delete();
-
-        foreach ($user->metadata as $metadata) {
-            $local_user->metadata()->create([
-                'uri_user'  => $user->uri_user,
-                'value'     => $metadata->value,
-                'key'       => $metadata->key, # TODO add scope
-            ]);
-        }
     }
 }

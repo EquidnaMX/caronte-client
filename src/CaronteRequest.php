@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * @author Gabriel Ruelas
+ * @license MIT
+ * @version 1.0.0
+ *
+ */
+
 namespace Equidna\Caronte;
 
 use Illuminate\Http\Request;
@@ -12,6 +19,10 @@ use Equidna\Toolkit\Helpers\ResponseHelper;
 use Equidna\Caronte\Facades\Caronte;
 use Exception;
 
+/**
+ * This class is responsible for making basic requests to the Caronte server.
+ */
+
 class CaronteRequest
 {
     private function __construct()
@@ -19,6 +30,12 @@ class CaronteRequest
         //ONLY STATIC METHODS ALLOWED
     }
 
+    /**
+     * Logs in a user with their password.
+     *
+     * @param Request $request The request object containing the user's email, password, and callback URL.
+     * @return Response|RedirectResponse The response object or a redirect response.
+     */
     public static function userPasswordLogin(Request $request): Response|RedirectResponse
     {
         $decoded_url  = base64_decode($request->callback_url);
@@ -43,8 +60,6 @@ class CaronteRequest
                 ]
             );
 
-
-
             if ($caronte_response->failed()) {
                 throw new RequestException(response: $caronte_response);
             }
@@ -63,7 +78,16 @@ class CaronteRequest
         return redirect($callback_url)->with(['success' => 'Sesión iniciada con éxito']);
     }
 
-    public static function twoFactorTokenRequest(Request $request)
+    /**
+     * Sends a two-factor token request.
+     *
+     * @param Request $request The request object containing the callback URL and email.
+     *
+     * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse The response from the server or a redirect response.
+     *
+     * @throws RequestException If the request to the server fails.
+     */
+    public static function twoFactorTokenRequest(Request $request): Response|RedirectResponse
     {
         try {
             $caronte_response = HTTP::withOptions(
@@ -94,7 +118,14 @@ class CaronteRequest
         }
     }
 
-    public static function twoFactorTokenLogin(Request $request, $token)
+    /**
+     * Logs in the user using a two-factor authentication token.
+     *
+     * @param Request $request The HTTP request object.
+     * @param string $token The two-factor authentication token.
+     * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse The response from the server or a redirect response.
+     */
+    public static function twoFactorTokenLogin(Request $request, $token): Response|RedirectResponse
     {
         $decoded_url  = base64_decode($request->callback_url);
 
@@ -129,7 +160,14 @@ class CaronteRequest
         return redirect($callback_url)->with('success', 'Sesión iniciada con éxito');
     }
 
-    public static function logout(Request $request, $logout_all_sessions = false)
+    /**
+     * Logs out the user.
+     *
+     * @param Request $request The request object.
+     * @param bool $logout_all_sessions (optional) Whether to logout from all sessions. Default is false.
+     * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse The response object or redirect response.
+     */
+    public static function logout(Request $request, $logout_all_sessions = false): Response|RedirectResponse
     {
         try {
             $caronte_response = HTTP::withOptions(

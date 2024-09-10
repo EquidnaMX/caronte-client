@@ -1,9 +1,16 @@
 <?php
 
+/**
+ * @author Gabriel Ruelas
+ * @license MIT
+ * @version 1.0.0
+ *
+ */
+
 return [
     'URL'                   => env('CARONTE_URL', ''),
     'VERSION'               => env('CARONTE_VERSION', 'v2'),
-    'V1_TOKEN_KEY'          => env('CARONTE_TOKEN_KEY', ''),
+    'V1_TOKEN_KEY'          => env('CARONTE_TOKEN_KEY', ''), //!WILL BE DEPRECATED IN FUTURE VERSIONS
 
     'ALLOW_HTTP_REQUESTS'   => env('CARONTE_ALLOW_HTTP_REQUESTS', false),
 
@@ -18,4 +25,6 @@ return [
     'ROUTES_PREFIX'  => env('CARONTE_ROUTES_PREFIX', ''),
     'SUCCESS_URL'    => env('CARONTE_SUCCESS_URL', '/'),
     'LOGIN_URL'      => env('CARONTE_LOGIN_URL', '/login'),
+
+    'UPDATE_LOCAL_USER' => env('CARONTE_UPDATE_USER', false)
 ];

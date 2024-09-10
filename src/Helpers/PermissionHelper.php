@@ -1,15 +1,19 @@
 <?php
 
-namespace Equidna\Caronte\Tools;
+/**
+ * @author Gabriel Ruelas
+ * @license MIT
+ * @version 1.0.0
+ *
+ */
+
+namespace Equidna\Caronte\Helpers;
 
 use Equidna\Caronte\Facades\Caronte;
 use Exception;
 
 class PermissionHelper
 {
-    /**
-     * Create a new class instance.
-     */
     public function __construct()
     {
         //

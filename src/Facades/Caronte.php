@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * @author Gabriel Ruelas
+ * @license MIT
+ * @version 1.0.0
+ */
+
 namespace Equidna\Caronte\Facades;
 
 use Illuminate\Support\Facades\Facade;

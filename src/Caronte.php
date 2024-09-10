@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Cookie;
 use Lcobucci\JWT\Token\Plain;
 use Equidna\Toolkit\Helpers\RouteHelper;
+use Equidna\Caronte\Models\CaronteUser;
 use Exception;
 use stdClass;
 
@@ -44,7 +45,11 @@ class Caronte
      */
     public function getUser(): stdClass|null
     {
-        return json_decode($this->getToken()->claims()->get('user'));
+        try {
+            return json_decode($this->getToken()->claims()->get('user'));
+        } catch (Exception $e) {
+            return null;
+        }
     }
 
     /**
@@ -132,5 +137,41 @@ class Caronte
         }
 
         Cookie::queue(Cookie::forget(static::COOKIE_NAME));
+    }
+
+    /**
+     * Update local user data.
+     *
+     * @param stdClass $user The user object containing updated data.
+     * @return void
+     */
+    public static function updateUserData(stdClass $user): void
+    {
+        try {
+            $local_user = CaronteUser::updateOrCreate(
+                [
+                    'uri_user' => $user->uri_user
+                ],
+                [
+                    'name'  => $user->name,
+                    'email' => $user->email
+                ]
+            );
+
+            foreach ($user->metadata as $metadata) {
+                $local_user->metadata()->updateOrCreate(
+                    [
+                        'uri_user'  => $user->uri_user,
+                        'key'       => $metadata->key,
+                    ],
+                    [
+                        'value'     => $metadata->value,
+                        'scope'     => $metadata->scope ?: config('carone.APP_ID')
+                    ]
+                );
+            }
+        } catch (Exception $e) {
+            // TODO log error
+        }
     }
 }

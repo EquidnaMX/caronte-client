@@ -1,12 +1,20 @@
 <?php
 
+/**
+ * @author Gabriel Ruelas
+ * @license MIT
+ * @version 1.0.0
+ *
+ */
+
 namespace Equidna\Caronte\Models;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
+use Equidna\Caronte\Models\User;
 use Equidna\Toolkit\Traits\Database\HasCompositePrimaryKey;
 
-class UserMetadata extends Model
+class CaronteUserMetadata extends Model
 {
     use HasCompositePrimaryKey;
 
@@ -17,13 +25,13 @@ class UserMetadata extends Model
 
     protected $fillable = [
         'uri_user',
-        'value',
-        'scope',
         'key',
+        'value',
+        'scope'
     ];
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'uri_user');
+        return $this->belongsTo(CaronteUser::class, 'uri_user');
     }
 }
