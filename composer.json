@@ -14,7 +14,8 @@
     "php": "^8.0",
     "illuminate/support": "^11.21",
     "lcobucci/jwt": "^5.3",
-    "lcobucci/clock": "^3.2"
+    "lcobucci/clock": "^3.2",
+    "equidna/toolkit": "^0.1.0"
   },
   "require-dev": {
     "illuminate/support": "^11.21",

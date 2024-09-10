@@ -7,11 +7,10 @@ use Illuminate\Http\Response;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
-use Equidna\Caronte\Tools\RouteHelper;
-use Equidna\Caronte\Tools\ResponseHelper;
+use Equidna\Toolkit\Helpers\RouteHelper;
+use Equidna\Toolkit\Helpers\ResponseHelper;
 use Equidna\Caronte\Facades\Caronte;
 use Exception;
-use Illuminate\Support\Facades\Cookie;
 
 class CaronteRequest
 {

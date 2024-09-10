@@ -6,7 +6,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Cookie;
 use Lcobucci\JWT\Token\Plain;
-use Equidna\Caronte\Tools\RouteHelper;
+use Equidna\Toolkit\Helpers\RouteHelper;
 use Exception;
 use stdClass;
 

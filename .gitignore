@@ -1,3 +1,4 @@
 /vendor/
 composer.lock
 ruleset.xml
+.DS_Store
