@@ -52,7 +52,7 @@ class CaronteRequest
                     'verify' => !config('caronte.ALLOW_HTTP_REQUESTS')
                 ]
             )->post(
-                config('caronte.URL') . 'api/v2/login',
+                config('caronte.URL') . 'api/' . config('caronte.VERSION') . '/login',
                 [
                     'email'    => $request->email,
                     'password' => $request->password,
@@ -95,7 +95,7 @@ class CaronteRequest
                     'verify' => !config('caronte.ALLOW_HTTP_REQUESTS')
                 ]
             )->post(
-                config('caronte.URL') . 'api/2fa',
+                config('caronte.URL') . 'api/' . config('caronte.VERSION') . '/2fa',
                 [
                     'application_url' => config('app.url'),
                     'app_id'          => config('caronte.APP_ID'),
@@ -140,7 +140,9 @@ class CaronteRequest
                 [
                     'verify' => !config('caronte.ALLOW_HTTP_REQUESTS')
                 ]
-            )->get(config('caronte.URL') . 'api/2fa/' . $token);
+            )->get(
+                config('caronte.URL') . 'api/' . config('caronte.VERSION') . '/2fa/' . $token
+            );
 
             if ($caronte_response->failed()) {
                 throw new RequestException($caronte_response);
@@ -178,7 +180,9 @@ class CaronteRequest
                 [
                     'Authorization' => "Bearer " . Caronte::getToken()->toString()
                 ]
-            )->get(config('caronte.URL') . 'api/logout' . ($logout_all_sessions ? 'All' : ''));
+            )->get(
+                config('caronte.URL') . 'api/' . config('caronte.VERSION') . '/logout' . ($logout_all_sessions ? 'All' : '')
+            );
 
             if ($caronte_response->failed()) {
                 throw new RequestException($caronte_response);
