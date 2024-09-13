@@ -145,8 +145,12 @@ class Caronte
      * @param stdClass $user The user object containing updated data.
      * @return void
      */
-    public static function updateUserData(stdClass $user): void
+    public static function updateUserData(stdClass|string $user): void
     {
+        if (is_string($user)) {
+            $user = json_decode($user);
+        }
+
         try {
             $local_user = CaronteUser::updateOrCreate(
                 [
