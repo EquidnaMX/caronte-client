@@ -18,6 +18,8 @@ use Exception;
 
 class CaronteToken
 {
+    public const MINIMUM_KEY_LENGTH = 32;
+
     private function __construct()
     {
         //
@@ -134,8 +136,11 @@ class CaronteToken
      */
     public static function getConfig(): Configuration
     {
+        $signing_key = (config('caronte.VERSION') == 'v1') ? config('caronte.TOKEN_KEY') : config('caronte.APP_SECRET');
 
-        $signing_key = (config('caronte.VERSION') == 'v1') ? config('caronte.V1_TOKEN_KEY') : config('caronte.APP_SECRET');
+        if (strlen($signing_key) < static::MINIMUM_KEY_LENGTH) {
+            $signing_key = str_pad($signing_key, static::MINIMUM_KEY_LENGTH, "\0");
+        }
 
         $config = Configuration::forSymmetricSigner(
             new Sha256(),
