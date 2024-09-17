@@ -80,7 +80,7 @@ class CaronteToken
                 [
                     'Authorization' => 'Bearer ' . $raw_token,
                 ]
-            )->get(config('caronte.URL') . 'api/' . config('caronte.VERSION') . '/exchange');
+            )->post(config('caronte.URL') . 'api/' . config('caronte.VERSION') . '/exchange');
 
             if ($caronte_response->failed()) {
                 throw new RequestException($caronte_response);
@@ -94,7 +94,7 @@ class CaronteToken
             return $token;
         } catch (RequestException $e) {
             Caronte::clearToken();
-            throw new Exception('Cannot exchange token');
+            throw new Exception('Cannot exchange token: ' . $e->response->body());
         }
     }
 
