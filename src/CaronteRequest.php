@@ -65,8 +65,10 @@ class CaronteRequest
             }
 
             $token  = CaronteToken::validateToken(raw_token: $caronte_response->body());
+        } catch (RequestException $e) {
+            return ResponseHelper::badRequest(message: $e->response->body());
         } catch (Exception $e) {
-            return ResponseHelper::badRequest(message: $e->getMessage());
+            return ResponseHelper::unautorized($e->getMessage());
         }
 
         if (RouteHelper::isAPI()) {
@@ -150,7 +152,9 @@ class CaronteRequest
 
             $token = CaronteToken::validateToken(raw_token: $caronte_response->body());
         } catch (RequestException $e) {
-            return ResponseHelper::badRequest($e->getMessage());
+            return ResponseHelper::badRequest($e->response->body());
+        } catch (Exception $e) {
+            return ResponseHelper::unautorized($e->getMessage());
         }
 
         if (RouteHelper::isAPI()) {
@@ -190,7 +194,7 @@ class CaronteRequest
 
             $response_array = ['success' => 'Sesión cerrada con éxito'];
         } catch (RequestException $e) {
-            $response_array = ['error' => $e->getMessage()];
+            $response_array = ['error' => $e->response->body()];
         }
 
         Caronte::clearToken();
