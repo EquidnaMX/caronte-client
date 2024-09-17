@@ -80,7 +80,7 @@ class CaronteToken
                 [
                     'Authorization' => 'Bearer ' . $raw_token,
                 ]
-            )->get(config('caronte.URL') . 'api/tokens/exchange');
+            )->get(config('caronte.URL') . 'api/' . config('caronte.VERSION') . '/exchange');
 
             if ($caronte_response->failed()) {
                 throw new RequestException($caronte_response);
@@ -88,6 +88,7 @@ class CaronteToken
 
             $token = static::validateToken($caronte_response->body());
 
+            Caronte::saveToken($token->toString());
             Caronte::setTokenWasExchanged();
 
             return $token;
