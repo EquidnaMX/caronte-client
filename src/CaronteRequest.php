@@ -104,7 +104,7 @@ class CaronteRequest
                 [
                     'email'   => $request->email,
                     'app_id'  => config('caronte.APP_ID'),
-                    'app_url' => base64_encode(config('app.url'))
+                    'app_url' => config('app.url')
                 ]
             );
 
@@ -229,9 +229,9 @@ class CaronteRequest
             )->post(
                 config('caronte.URL') . 'api/' . config('caronte.VERSION') . '/2fa',
                 [
-                    'email'           => $request->email,
-                    'app_id'          => config('caronte.APP_ID'),
-                    'application_url' => config('app.url'),
+                    'email'     => $request->email,
+                    'app_id'    => config('caronte.APP_ID'),
+                    'app_url'   => config('app.url'),
                 ]
             );
 
@@ -239,14 +239,18 @@ class CaronteRequest
                 throw new RequestException($caronte_response);
             }
 
-            if (RouteHelper::isAPI()) {
-                return response("Authentication email sent to " . $request->email, 200);
-            }
-
-            return back()->with(['success' => $caronte_response->body()]);
+            $response = $caronte_response->body();
+        } catch (RequestException $e) {
+            return ResponseHelper::badRequest($e->response->body());
         } catch (Exception $e) {
             return ResponseHelper::badRequest($e->getMessage());
         }
+
+        if (RouteHelper::isAPI()) {
+            return response($response, 200);
+        }
+
+        return redirect(config('caronte.LOGIN_URL'))->with(['success' => $response]);
     }
 
     /**
@@ -321,17 +325,19 @@ class CaronteRequest
                 throw new RequestException($caronte_response);
             }
 
-            $response_array = ['success' => 'Sesión cerrada con éxito'];
+            $response = $caronte_response->body();
         } catch (RequestException $e) {
-            $response_array = ['error' => $e->response->body()];
+            return ResponseHelper::badRequest($e->response->body());
+        } catch (Exception $e) {
+            return ResponseHelper::unautorized($e->getMessage());
         }
 
         Caronte::clearToken();
 
         if (RouteHelper::isAPI()) {
-            return response('Logout complete', 200);
+            return response($response, 200);
         }
 
-        return redirect(config('caronte.LOGIN_URL'))->with($response_array);
+        return redirect(config('caronte.LOGIN_URL'))->with(['success' => $response]);
     }
 }

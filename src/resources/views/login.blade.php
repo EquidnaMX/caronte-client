@@ -20,7 +20,7 @@
                                 <div class="form-group">
                                     <label for="password" class="form-control-label">Contraseña</label>
                                     <input type="password" name="password" class="form-control">
-                                    <a href="{{ config('caronte.URL') . 'password/recover?callback_url=' . base64_encode(config('app.url') . config('caronte.LOGIN_URL')) . '&application=' . base64_encode(config('app.name')) }}">¿Olvidaste tu contraseña?</a>
+                                    <a href="/password/recover">¿Olvidaste tu contraseña?</a>
                                 </div>
                                 <div class="col-lg-12 loginbttm">
                                     <div class="col-lg-12 login-btm login-button">
