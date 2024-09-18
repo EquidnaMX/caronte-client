@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="mt-5 col-6 mx-auto">
-        <form action="{{ URL::full() }}" method="POST">
+        <form method="POST">
             @csrf
             <div class="form-group mt-5">
                 <h4>Correo electrónico registrado</h4>

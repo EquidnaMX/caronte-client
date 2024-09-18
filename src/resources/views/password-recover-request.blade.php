@@ -3,7 +3,7 @@
 @section('title-form', 'Recupera tu contraseña')
 
 @section('content')
-    <form action="{{ url()->current() }}/request" method="POST">
+    <form method="POST">
         @csrf
         <div class="form-group mt-3 text-center">
             <label for="email">Correo electrónico:</label>

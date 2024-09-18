@@ -12,7 +12,6 @@ namespace Equidna\Caronte\Models;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Equidna\Caronte\Models\UserMetadata;
 
 class CaronteUser extends Model
 {

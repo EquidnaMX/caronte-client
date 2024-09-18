@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="main-content">
-        <form action="" method="POST">
+        <form method="POST">
             @csrf
             <div class="Wrapper__Login d-flex justify-content-center">
                 <div class="container">
