@@ -53,7 +53,8 @@ class CaronteServiceProvider extends ServiceProvider
                 __DIR__ . '/../resources/views' => resource_path('views/vendor/caronte'),
             ],
             [
-                'views',
+                'caronte:views',
+                'caronte',
             ]
         );
 
@@ -63,7 +64,8 @@ class CaronteServiceProvider extends ServiceProvider
                 __DIR__ . '/../resources/assets' => public_path('vendor/caronte'),
             ],
             [
-                'assets',
+                'caronte:assets',
+                'caronte',
             ]
         );
 
@@ -73,7 +75,8 @@ class CaronteServiceProvider extends ServiceProvider
                 __DIR__ . '/../migrations' => database_path('migrations'),
             ],
             [
-                'migrations'
+                'caronte:migrations',
+                'caronte'
             ]
         );
     }
