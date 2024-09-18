@@ -3,7 +3,7 @@
 /**
  * @author Gabriel Ruelas
  * @license MIT
- * @version 1.0.0
+ * @version 1.0.5
  */
 
 namespace Equidna\Caronte\Http\Controllers;
@@ -37,12 +37,14 @@ class CaronteController extends Controller
     }
 
     /**
-     * Logs in the user.
+     * Handle the login request.
      *
-     * @param Request $request The HTTP request object.
+     * This method processes the login request and determines whether to use
+     * two-factor authentication (2FA) based on the configuration setting.
      *
-     * @return Response|RedirectResponse The response object or a redirect response.
-     */
+     * @param \Illuminate\Http\Request $request The HTTP request instance.
+     * @return \Symfony\Component\HttpFoundation\Response|\Illuminate\Http\RedirectResponse
+     * */
     public function login(Request $request): Response|RedirectResponse
     {
         if (config('caronte.USE_2FA')) {
@@ -100,11 +102,30 @@ class CaronteController extends Controller
         return CaronteRequest::passwordRecoverRequest(request: $request);
     }
 
+    /**
+     * Validate the password recovery token.
+     *
+     * This method validates the password recover token against Caronte API.
+     *
+     * @param \Illuminate\Http\Request $request The HTTP request instance.
+     * @param string $token The password recovery token to be validated.
+     *
+     * @return \Illuminate\Http\Response|\Illuminate\View\View The response or view returned by the CaronteRequest service.
+     */
     public function passwordRecoverTokenValidation(Request $request, string $token): Response|View
     {
         return CaronteRequest::passwordRecoverTokenValidation(request: $request, token: $token);
     }
 
+    /**
+     * Handle the password recovery process.
+     *
+     * This method delegates the password recovery request to the CaronteRequest service.
+     *
+     * @param Request $request The HTTP request instance.
+     * @param string $token The password recovery token.
+     * @return Response|RedirectResponse The response after processing the password recovery.
+     */
     public function passwordRecover(Request $request, string $token): Response|RedirectResponse
     {
         return CaronteRequest::passwordRecover(request: $request, token: $token);
