@@ -72,13 +72,14 @@ class Caronte
     {
         //If cookie doesn't have an existent token id value, we generate one new random string
         $token_id = Cookie::get(static::COOKIE_NAME) ?: Str::random(20);
-        //Cookie gets queued with the token_id
+
         Cookie::queue(Cookie::forever(static::COOKIE_NAME, $token_id));
 
         //if an old token isstored we clear the file first
         if (Storage::disk('local')->exists('tokens/' . $token_id)) {
             Storage::disk('local')->delete('tokens/' . $token_id);
         }
+
         Storage::disk('local')->put('tokens/' . $token_id, $token_str);
     }
 

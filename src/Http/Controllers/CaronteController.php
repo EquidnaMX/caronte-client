@@ -59,7 +59,7 @@ class CaronteController extends Controller
      * @param string $token The two-factor authentication token.
      * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse The HTTP response or a redirect response.
      */
-    public function twoFactorTokenLogin(Request $request, $token): Response|RedirectResponse
+    public function twoFactorTokenLogin(Request $request, string $token): Response|RedirectResponse
     {
         return CaronteRequest::twoFactorTokenLogin(request: $request, token: $token);
     }
@@ -76,5 +76,37 @@ class CaronteController extends Controller
             request: $request,
             logout_all_sessions: $request->filled('all')
         );
+    }
+
+    /**
+     * Display the password recovery request form.
+     *
+     * @param \Illuminate\Http\Request $request The HTTP request instance.
+     * @return \Illuminate\View\View The view for the password recovery request form.
+     */
+    public function passwordRecoverRequestForm(Request $request): View
+    {
+        return view('caronte::password-recover-request');
+    }
+
+    /**
+     * Handles the password recovery request.
+     *
+     * @param Request $request The HTTP request object containing the password recovery details.
+     * @return Response|RedirectResponse The response object or a redirect response.
+     */
+    public function passwordRecoverRequest(Request $request): Response|RedirectResponse
+    {
+        return CaronteRequest::passwordRecoverRequest(request: $request);
+    }
+
+    public function passwordRecoverTokenValidation(Request $request, string $token): Response|View
+    {
+        return CaronteRequest::passwordRecoverTokenValidation(request: $request, token: $token);
+    }
+
+    public function passwordRecover(Request $request, string $token): Response|RedirectResponse
+    {
+        return CaronteRequest::passwordRecover(request: $request, token: $token);
     }
 }

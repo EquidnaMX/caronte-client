@@ -80,7 +80,12 @@ class CaronteToken
                 [
                     'Authorization' => 'Bearer ' . $raw_token,
                 ]
-            )->post(config('caronte.URL') . 'api/' . config('caronte.VERSION') . '/exchange');
+            )->post(
+                config('caronte.URL') . 'api/' . config('caronte.VERSION') . '/exchange',
+                [
+                    'app_id' => config('caronte.APP_ID')
+                ]
+            );
 
             if ($caronte_response->failed()) {
                 throw new RequestException($caronte_response);

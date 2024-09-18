@@ -18,6 +18,7 @@ use Equidna\Toolkit\Helpers\RouteHelper;
 use Equidna\Toolkit\Helpers\ResponseHelper;
 use Equidna\Caronte\Facades\Caronte;
 use Exception;
+use Illuminate\Support\Facades\View;
 
 /**
  * This class is responsible for making basic requests to the Caronte server.
@@ -81,6 +82,135 @@ class CaronteRequest
     }
 
     /**
+     * Handles the password recovery request.
+     *
+     * This method sends a POST request to the Caronte API to initiate the password recovery process.
+     * It handles both API and web responses based on the request type.
+     *
+     * @param Request $request The incoming request containing the user's email.
+     * @return Response|RedirectResponse Returns a response for API requests or a redirect response for web requests.
+     * @throws RequestException If the HTTP request to the Caronte API fails.
+     * @throws Exception If any other exception occurs during the process.
+     */
+    public static function passwordRecoverRequest(Request $request): Response|RedirectResponse
+    {
+        try {
+            $caronte_response = HTTP::withOptions(
+                [
+                    'verify' => !config('caronte.ALLOW_HTTP_REQUESTS')
+                ]
+            )->post(
+                config('caronte.URL') . 'api/' . config('caronte.VERSION') . '/password/recover',
+                [
+                    'email'   => $request->email,
+                    'app_id'  => config('caronte.APP_ID'),
+                    'app_url' => base64_encode(config('app.url'))
+                ]
+            );
+
+            if ($caronte_response->failed()) {
+                throw new RequestException(response: $caronte_response);
+            }
+
+            $response = $caronte_response->body();
+        } catch (RequestException $e) {
+            return ResponseHelper::badRequest($e->response->body());
+        } catch (Exception $e) {
+            return ResponseHelper::badRequest($e->getMessage());
+        }
+
+        if (RouteHelper::isAPI()) {
+            return response($response, 200);
+        }
+
+        return redirect(config('caronte.LOGIN_URL'))->with(['success' => $response]);
+    }
+
+    /**
+     * Validates a password recovery token by making an HTTP request to the Caronte API.
+     *
+     * @param Request $request The incoming HTTP request.
+     * @param string $token The password recovery token to validate.
+     * @return Response|View Returns a Response object if the request is an API call,
+     *                       or a View object if the request is a web call.
+     *
+     * @throws RequestException If the HTTP request to the Caronte API fails.
+     * @throws Exception If any other exception occurs during the process.
+     */
+    public static function passwordRecoverTokenValidation(Request $request, $token): Response|View
+    {
+        try {
+            $caronte_response = HTTP::withOptions(
+                [
+                    'verify' => !config('caronte.ALLOW_HTTP_REQUESTS')
+                ]
+            )->get(
+                config('caronte.URL') . 'api/' . config('caronte.VERSION') . '/password/recover/' . $token
+            );
+
+            if ($caronte_response->failed()) {
+                throw new RequestException($caronte_response);
+            }
+
+            $response = $caronte_response->body();
+        } catch (RequestException $e) {
+            return ResponseHelper::badRequest($e->response->body());
+        } catch (Exception $e) {
+            return ResponseHelper::badRequest($e->getMessage());
+        }
+
+        if (RouteHelper::isAPI()) {
+            return response($response, 200);
+        }
+
+        return View('caronte::password-recover');
+    }
+
+    /**
+     * Handles the password recovery process by sending a request to the Caronte API.
+     *
+     * @param \Illuminate\Http\Request $request The incoming request containing the new password.
+     * @param string $token The token used for password recovery.
+     *
+     * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
+     *
+     * @throws \Illuminate\Http\Client\RequestException If the HTTP request fails.
+     * @throws \Exception If any other exception occurs.
+     */
+    public static function passwordRecover(Request $request, $token): Response|RedirectResponse
+    {
+        try {
+            $caronte_response = HTTP::withOptions(
+                [
+                    'verify' => !config('caronte.ALLOW_HTTP_REQUESTS')
+                ]
+            )->post(
+                config('caronte.URL') . 'api/' . config('caronte.VERSION') . '/password/recover/' . $token,
+                [
+                    'password'              => $request->password,
+                    'password_confirmation' => $request->password
+                ]
+            );
+
+            if ($caronte_response->failed()) {
+                throw new RequestException($caronte_response);
+            }
+
+            $response = $caronte_response->body();
+        } catch (RequestException $e) {
+            return ResponseHelper::badRequest($e->response->body());
+        } catch (Exception $e) {
+            return ResponseHelper::badRequest($e->getMessage());
+        }
+
+        if (RouteHelper::isAPI()) {
+            return response($response, 200);
+        }
+
+        return redirect(config('caronte.LOGIN_URL'))->with(['success' => $response]);
+    }
+
+    /**
      * Sends a two-factor token request.
      *
      * @param Request $request The request object containing the callback URL and email.
@@ -99,10 +229,9 @@ class CaronteRequest
             )->post(
                 config('caronte.URL') . 'api/' . config('caronte.VERSION') . '/2fa',
                 [
-                    'application_url' => config('app.url'),
+                    'email'           => $request->email,
                     'app_id'          => config('caronte.APP_ID'),
-                    'callback_url'    => $request->callback_url,
-                    'email'           => $request->email
+                    'application_url' => config('app.url'),
                 ]
             );
 
