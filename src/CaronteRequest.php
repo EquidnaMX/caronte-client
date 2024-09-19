@@ -137,7 +137,7 @@ class CaronteRequest
      * @throws RequestException If the HTTP request to the Caronte API fails.
      * @throws Exception If any other exception occurs during the process.
      */
-    public static function passwordRecoverTokenValidation(Request $request, $token): Response|RedirectResponse
+    public static function passwordRecoverTokenValidation(Request $request, $token): Response|RedirectResponse|View
     {
         try {
             $caronte_response = HTTP::withOptions(
@@ -262,7 +262,7 @@ class CaronteRequest
      * @param string $token The two-factor authentication token.
      * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse The response from the server or a redirect response.
      */
-    public static function twoFactorTokenLogin(Request $request, $token): Response|RedirectResponse|View
+    public static function twoFactorTokenLogin(Request $request, $token): Response|RedirectResponse
     {
         $decoded_url  = base64_decode($request->callback_url);
 
