@@ -162,7 +162,9 @@ class CaronteRequest
             return response($response, 200);
         }
 
-        return View('caronte::password-recover');
+        $token_response = json_decode($response);
+
+        return View('caronte::password-recover')->with(['user' => $token_response->user]);
     }
 
     /**
