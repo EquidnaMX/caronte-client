@@ -146,7 +146,7 @@ class CaronteRequest
                 [
                     'verify' => !config('caronte.ALLOW_HTTP_REQUESTS')
                 ]
-            )->get(
+            )->post(
                 config('caronte.URL') . 'api/' . config('caronte.VERSION') . '/2fa/' . $token,
                 [
                     'app_id'    => config('caronte.APP_ID'),
