@@ -18,6 +18,7 @@ use Equidna\Toolkit\Helpers\RouteHelper;
 use Equidna\Toolkit\Helpers\ResponseHelper;
 use Equidna\Caronte\Facades\Caronte;
 use Exception;
+use Illuminate\Support\Facades\Redirect;
 
 /**
  * This class is responsible for making basic requests to the Caronte server.
@@ -136,7 +137,7 @@ class CaronteRequest
      * @throws RequestException If the HTTP request to the Caronte API fails.
      * @throws Exception If any other exception occurs during the process.
      */
-    public static function passwordRecoverTokenValidation(Request $request, $token): Response|View
+    public static function passwordRecoverTokenValidation(Request $request, $token): Response|RedirectResponse|View
     {
         try {
             $caronte_response = HTTP::withOptions(
