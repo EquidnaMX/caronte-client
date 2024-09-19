@@ -112,7 +112,7 @@ class CaronteController extends Controller
      *
      * @return \Illuminate\Http\Response|\Illuminate\View\View The response or view returned by the CaronteRequest service.
      */
-    public function passwordRecoverTokenValidation(Request $request, string $token): Response|View
+    public function passwordRecoverTokenValidation(Request $request, string $token): Response|RedirectResponse
     {
         return CaronteRequest::passwordRecoverTokenValidation(request: $request, token: $token);
     }

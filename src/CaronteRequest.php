@@ -137,7 +137,7 @@ class CaronteRequest
      * @throws RequestException If the HTTP request to the Caronte API fails.
      * @throws Exception If any other exception occurs during the process.
      */
-    public static function passwordRecoverTokenValidation(Request $request, $token): Response|RedirectResponse|View
+    public static function passwordRecoverTokenValidation(Request $request, $token): Response|RedirectResponse
     {
         try {
             $caronte_response = HTTP::withOptions(
