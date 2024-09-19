@@ -67,20 +67,6 @@ class CaronteController extends Controller
     }
 
     /**
-     * Logout the user.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @return \Symfony\Component\HttpFoundation\Response|\Illuminate\Http\RedirectResponse
-     */
-    public function logout(Request $request): Response|RedirectResponse
-    {
-        return CaronteRequest::logout(
-            request: $request,
-            logout_all_sessions: $request->filled('all')
-        );
-    }
-
-    /**
      * Display the password recovery request form.
      *
      * @param \Illuminate\Http\Request $request The HTTP request instance.
@@ -129,5 +115,19 @@ class CaronteController extends Controller
     public function passwordRecover(Request $request, string $token): Response|RedirectResponse
     {
         return CaronteRequest::passwordRecover(request: $request, token: $token);
+    }
+
+    /**
+     * Logout the user.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Symfony\Component\HttpFoundation\Response|\Illuminate\Http\RedirectResponse
+     */
+    public function logout(Request $request): Response|RedirectResponse
+    {
+        return CaronteRequest::logout(
+            request: $request,
+            logout_all_sessions: $request->filled('all')
+        );
     }
 }
