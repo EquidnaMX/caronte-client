@@ -25,7 +25,7 @@ class CaronteController extends Controller
      */
     public function loginForm(Request $request): View
     {
-        $login_view = config('caronte.USE_2FA') ? '2fa_login' : 'login';
+        $login_view = config('caronte.USE_2FA') ? '2fa-login' : 'login';
 
         return View('caronte::' . $login_view)
             ->with(
