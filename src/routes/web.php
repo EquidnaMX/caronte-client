@@ -22,4 +22,4 @@ Route::match(['get', 'post'], 'logout', [CaronteController::class, 'logout'])->n
 Route::get('password/recover', [CaronteController::class, 'passwordRecoverRequestForm'])->name('caronte.password.recover');
 Route::post('password/recover', [CaronteController::class, 'passwordRecoverRequest']);
 Route::get('password/recover/{token}', [CaronteController::class, 'passwordRecoverTokenValidation']);
-Route::get('password/recover/{token}', [CaronteController::class, 'passwordRecover']);
+Route::post('password/recover/{token}', [CaronteController::class, 'passwordRecover']);
