@@ -82,6 +82,98 @@ class CaronteRequest
     }
 
     /**
+     * Sends a two-factor token request.
+     *
+     * @param Request $request The request object containing the callback URL and email.
+     *
+     * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse The response from the server or a redirect response.
+     *
+     * @throws RequestException If the request to the server fails.
+     */
+    public static function twoFactorTokenRequest(Request $request): Response|RedirectResponse
+    {
+        try {
+            $caronte_response = HTTP::withOptions(
+                [
+                    'verify' => !config('caronte.ALLOW_HTTP_REQUESTS')
+                ]
+            )->post(
+                config('caronte.URL') . 'api/' . config('caronte.VERSION') . '/2fa',
+                [
+                    'email'     => $request->email,
+                    'app_id'    => config('caronte.APP_ID'),
+                    'app_url'   => config('app.url'),
+                ]
+            );
+
+            if ($caronte_response->failed()) {
+                throw new RequestException($caronte_response);
+            }
+
+            $response = $caronte_response->body();
+        } catch (RequestException $e) {
+            return ResponseHelper::badRequest($e->response->body());
+        } catch (Exception $e) {
+            return ResponseHelper::badRequest($e->getMessage());
+        }
+
+        if (RouteHelper::isAPI()) {
+            return response($response, 200);
+        }
+
+        return redirect(config('caronte.LOGIN_URL'))->with(['success' => $response]);
+    }
+
+    /**
+     * Logs in the user using a two-factor authentication token.
+     *
+     * @param Request $request The HTTP request object.
+     * @param string $token The two-factor authentication token.
+     * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse The response from the server or a redirect response.
+     */
+    public static function twoFactorTokenLogin(Request $request, $token): Response|RedirectResponse
+    {
+        $decoded_url  = base64_decode($request->callback_url);
+
+        if (!empty($decoded_url) && $decoded_url !== '\\') {
+            $callback_url = $decoded_url;
+        } else {
+            $callback_url = config('caronte.SUCCESS_URL');
+        }
+
+        try {
+            $caronte_response = HTTP::withOptions(
+                [
+                    'verify' => !config('caronte.ALLOW_HTTP_REQUESTS')
+                ]
+            )->get(
+                config('caronte.URL') . 'api/' . config('caronte.VERSION') . '/2fa/' . $token,
+                [
+                    'app_id'    => config('caronte.APP_ID'),
+                ]
+            );
+
+            if ($caronte_response->failed()) {
+                throw new RequestException($caronte_response);
+            }
+
+            $token = CaronteToken::validateToken(raw_token: $caronte_response->body());
+        } catch (RequestException $e) {
+            return ResponseHelper::badRequest($e->response->body());
+        } catch (Exception $e) {
+            return ResponseHelper::unautorized($e->getMessage());
+        }
+
+        if (RouteHelper::isAPI()) {
+            return response($token->toString(), 200);
+        }
+
+        Caronte::saveToken($token->toString());
+
+        return redirect($callback_url)->with('success', 'Sesión iniciada con éxito');
+    }
+
+    /**
      * Handles the password recovery request.
      *
      * This method sends a POST request to the Caronte API to initiate the password recovery process.
@@ -210,95 +302,6 @@ class CaronteRequest
         }
 
         return redirect(config('caronte.LOGIN_URL'))->with(['success' => $response]);
-    }
-
-    /**
-     * Sends a two-factor token request.
-     *
-     * @param Request $request The request object containing the callback URL and email.
-     *
-     * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse The response from the server or a redirect response.
-     *
-     * @throws RequestException If the request to the server fails.
-     */
-    public static function twoFactorTokenRequest(Request $request): Response|RedirectResponse
-    {
-        try {
-            $caronte_response = HTTP::withOptions(
-                [
-                    'verify' => !config('caronte.ALLOW_HTTP_REQUESTS')
-                ]
-            )->post(
-                config('caronte.URL') . 'api/' . config('caronte.VERSION') . '/2fa',
-                [
-                    'email'     => $request->email,
-                    'app_id'    => config('caronte.APP_ID'),
-                    'app_url'   => config('app.url'),
-                ]
-            );
-
-            if ($caronte_response->failed()) {
-                throw new RequestException($caronte_response);
-            }
-
-            $response = $caronte_response->body();
-        } catch (RequestException $e) {
-            return ResponseHelper::badRequest($e->response->body());
-        } catch (Exception $e) {
-            return ResponseHelper::badRequest($e->getMessage());
-        }
-
-        if (RouteHelper::isAPI()) {
-            return response($response, 200);
-        }
-
-        return redirect(config('caronte.LOGIN_URL'))->with(['success' => $response]);
-    }
-
-    /**
-     * Logs in the user using a two-factor authentication token.
-     *
-     * @param Request $request The HTTP request object.
-     * @param string $token The two-factor authentication token.
-     * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse The response from the server or a redirect response.
-     */
-    public static function twoFactorTokenLogin(Request $request, $token): Response|RedirectResponse
-    {
-        $decoded_url  = base64_decode($request->callback_url);
-
-        if (!empty($decoded_url) && $decoded_url !== '\\') {
-            $callback_url = $decoded_url;
-        } else {
-            $callback_url = config('caronte.SUCCESS_URL');
-        }
-
-        try {
-            $caronte_response = HTTP::withOptions(
-                [
-                    'verify' => !config('caronte.ALLOW_HTTP_REQUESTS')
-                ]
-            )->get(
-                config('caronte.URL') . 'api/' . config('caronte.VERSION') . '/2fa/' . $token
-            );
-
-            if ($caronte_response->failed()) {
-                throw new RequestException($caronte_response);
-            }
-
-            $token = CaronteToken::validateToken(raw_token: $caronte_response->body());
-        } catch (RequestException $e) {
-            return ResponseHelper::badRequest($e->response->body());
-        } catch (Exception $e) {
-            return ResponseHelper::unautorized($e->getMessage());
-        }
-
-        if (RouteHelper::isAPI()) {
-            return response($token->toString(), 200);
-        }
-
-        Caronte::saveToken($token->toString());
-
-        return redirect($callback_url)->with('success', 'Sesión iniciada con éxito');
     }
 
     /**
