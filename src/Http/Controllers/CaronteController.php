@@ -8,11 +8,11 @@
 
 namespace Equidna\Caronte\Http\Controllers;
 
-use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\View;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Routing\Controller;
 use Equidna\Caronte\CaronteRequest;
 
 class CaronteController extends Controller

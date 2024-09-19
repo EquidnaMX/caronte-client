@@ -3,8 +3,7 @@
 /**
  * @author Gabriel Ruelas
  * @license MIT
- * @version 1.0.5
- *
+ * @version 1.0.5 *
  */
 
 namespace Equidna\Caronte;
@@ -14,11 +13,11 @@ use Illuminate\Http\Response;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Contracts\View\View;
 use Equidna\Toolkit\Helpers\RouteHelper;
 use Equidna\Toolkit\Helpers\ResponseHelper;
 use Equidna\Caronte\Facades\Caronte;
 use Exception;
-use Illuminate\Support\Facades\View;
 
 /**
  * This class is responsible for making basic requests to the Caronte server.
