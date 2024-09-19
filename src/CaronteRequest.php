@@ -262,7 +262,7 @@ class CaronteRequest
      * @param string $token The two-factor authentication token.
      * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse The response from the server or a redirect response.
      */
-    public static function twoFactorTokenLogin(Request $request, $token): Response|RedirectResponse
+    public static function twoFactorTokenLogin(Request $request, $token): Response|RedirectResponse|View
     {
         $decoded_url  = base64_decode($request->callback_url);
 
