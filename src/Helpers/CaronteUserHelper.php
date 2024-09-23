@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class CaronteUserHelper
 {
-    public function __construct()
+    private function __construct()
     {
         //
     }

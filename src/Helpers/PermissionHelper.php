@@ -37,7 +37,6 @@ class PermissionHelper
 
         return $roles->contains(
             fn($role) => $role->uri_application === $uri_application
-
         );
     }
 

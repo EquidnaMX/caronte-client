@@ -93,17 +93,6 @@ class Caronte
         $this->forgetCookie();
     }
 
-    /**
-     * Echoes the given message.
-     *
-     * @param string $message The message to be echoed.
-     * @return string The echoed message.
-     */
-    public function echo(string $message): string
-    {
-        return $message;
-    }
-
     public function setTokenWasExchanged(): void
     {
         $this->new_token = true;
@@ -117,6 +106,17 @@ class Caronte
     public function tokenWasExchanged(): bool
     {
         return $this->new_token;
+    }
+
+    /**
+     * Echoes the given message.
+     *
+     * @param string $message The message to be echoed.
+     * @return string The echoed message.
+     */
+    public function echo(string $message): string
+    {
+        return $message;
     }
 
     /**
