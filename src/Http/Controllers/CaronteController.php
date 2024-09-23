@@ -14,6 +14,7 @@ use Illuminate\Http\Response;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Controller;
 use Equidna\Caronte\CaronteRequest;
+use Equidna\Caronte\Facades\Caronte;
 
 class CaronteController extends Controller
 {
@@ -129,5 +130,18 @@ class CaronteController extends Controller
             request: $request,
             logout_all_sessions: $request->filled('all')
         );
+    }
+
+    /**
+     * Retrieve a token from the Caronte service.
+     *
+     * This method handles a request to obtain a token by calling the Caronte service's getToken method.
+     *
+     * @param \Illuminate\Http\Request $request The incoming HTTP request.
+     * @return \Illuminate\Http\Response The response containing the token.
+     */
+    public function getTolken(Request $request): Response
+    {
+        return Response(Caronte::getToken(), 200);
     }
 }

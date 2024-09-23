@@ -1,6 +1,6 @@
 {
   "name": "equidna/caronte-client",
-  "description": "Library package for caronte authentication",
+  "description": "Caronte authentication client",
   "version": "1.0.5",
   "type": "library",
   "license": "MIT",
