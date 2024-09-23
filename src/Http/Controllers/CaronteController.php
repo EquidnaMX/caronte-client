@@ -142,6 +142,6 @@ class CaronteController extends Controller
      */
     public function getToken(Request $request): Response
     {
-        return Response(Caronte::getToken(), 200);
+        return Response(Caronte::getToken()->toString(), 200);
     }
 }
