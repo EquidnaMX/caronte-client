@@ -81,52 +81,53 @@ Validates that the user has **_any_** of the provided roles. _root_ role is allw
 
 This package provides helper classes for simplifying some common actions with users, all methods are designed to be called statically
 
-**Equidna\Caronte\Helpers\CaronteUserHelper**
+### Equidna\Caronte\Helpers\CaronteUserHelper
 
 - **getUserName(string $uri_user):**_string_
-  Returns the name of the user with the asociated uri
+  Returns the name of the user with the asociated URI
+
 - **getUserEmail(string $uri_user):**_string_
-  Returns the email of the user with the asociated uri
+  Returns the email of the user with the asociated URI
 
-> _getUserMetadata(string $uri_user, string $key):**string**_
-> Returns metadata valuie for the provided key and uri_user
+- **getUserMetadata(string $uri_user, string $key):**_string_
+  Returns metadata valuie for the provided key and uri_user
 
-**Equidna\Caronte\Helpers\PermissionHelper**
+### Equidna\Caronte\Helpers\PermissionHelper
 
-> _hasApplication():**bool**_
-> Validates if current user has any role asociated with the **CARONTE_APP_ID**
->
-> _hasRoles(mixed $roles):**bool**_
-> Validates if the current user has any of the provided roles **$roles** can be provided as a comma separated list of values or an array
-> **root** role is always added to the list therefore an user with the root role will allways return true.
+- **hasApplication():**_bool_
+  Validates if current user has any role asociated with the **CARONTE_APP_ID**
+
+- **hasRoles(mixed $roles):**_bool_
+  Validates if the current user has any of the provided roles **$roles** can be provided as a comma separated list of values or an array
+  **root** role is always added to the list therefore an user with the root role will allways return true.
 
 ---
 
 ## Facades
 
-**Equidna\Caronte**
+### Equidna\Caronte
 
-> _getToken():**Plain**_
-> Returns a Lcobucci\JWT\Token\Plain representing the token in use
+- **getToken():**_Plain_
+  Returns a Lcobucci\JWT\Token\Plain representing the token in use
 
-> _getUser():**stdClass|null**_
-> Returns a stdClass representing the user for whom the token was isued or null if any error was found while decoding
+- **getUser():**_stdClass|null_
+  Returns a stdClass representing the user for whom the token was isued or null if any error was found while decoding
 
-> _getRouteUser():**string**_
-> Returns the {uri_user} part of the route or an empty string of no {uri_user} is found on the route
+- **getRouteUser():**_string_
+  Returns the {uri_user} part of the route or an empty string of no {uri_user} is found on the route
 
-> _saveToken(string $token_str):**void**_
-> @param $token*string
-> stores the provided token string on the *tokens* folder of the server and saves the file id on a cookie named *caronte_token\*
+- **saveToken(string $token_str):**_void_
+  @param $token*string
+  stores the provided token string on the *tokens* folder of the server and saves the file id on a cookie named *caronte_token\*
 
-> _clearToken():**void**_
-> Clears the _caronte_token_ cookie and deletes the asociated file storing the user token
+- **clearToken():**_void_
+  Clears the _caronte_token_ cookie and deletes the asociated file storing the user token
 
-> _setTokenWasExchanged():**void**_
-> Raises a flag indicating that the token had expired and was exchanged during the validation process
+- **setTokenWasExchanged():**_void_
+  Raises a flag indicating that the token had expired and was exchanged during the validation process
 
-> _tokenWasExchanged():**bool**_
-> Return true if the token was exchanged during the validation process
+- **tokenWasExchanged():**_bool_
+  Return true if the token was exchanged during the validation process
 
-> _echo(string $message):**string**_
-> Returns the provided message
+- **echo(string $message):**_string_
+  Returns the provided message
