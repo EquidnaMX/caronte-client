@@ -83,11 +83,10 @@ This package provides helper classes for simplifying some common actions with us
 
 **Equidna\Caronte\Helpers\CaronteUserHelper**
 
-_getUserName(string $uri_user):**string**_
-Returns the name of the user with the asociated uri
-
-> _getUserEmail(string $uri_user):**string**_
-> Returns the email of the user with the asociated uri
+- **getUserName(string $uri_user):**_string_
+  Returns the name of the user with the asociated uri
+- **getUserEmail(string $uri_user):**_string_
+  Returns the email of the user with the asociated uri
 
 > _getUserMetadata(string $uri_user, string $key):**string**_
 > Returns metadata valuie for the provided key and uri_user
