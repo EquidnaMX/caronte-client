@@ -140,7 +140,7 @@ class CaronteController extends Controller
      * @param \Illuminate\Http\Request $request The incoming HTTP request.
      * @return \Illuminate\Http\Response The response containing the token.
      */
-    public function getTolken(Request $request): Response
+    public function getToken(Request $request): Response
     {
         return Response(Caronte::getToken(), 200);
     }
