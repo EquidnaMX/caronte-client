@@ -83,8 +83,8 @@ This package provides helper classes for simplifying some common actions with us
 
 **Equidna\Caronte\Helpers\CaronteUserHelper**
 
-> _getUserName(string $uri_user):**string**_
-> Returns the name of the user with the asociated uri
+_getUserName(string $uri_user):**string**_
+Returns the name of the user with the asociated uri
 
 > _getUserEmail(string $uri_user):**string**_
 > Returns the email of the user with the asociated uri
