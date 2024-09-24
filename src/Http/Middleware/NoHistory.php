@@ -23,8 +23,8 @@ class NoHistory
 {
     public function handle(Request $request, Closure $next): Response
     {
+        $request->headers->set('X-Requested-With', 'XMLHttpRequest');
         $response = $next($request);
-        $response->headers->set('X-Requested-With', 'XMLHttpRequest');
         return $response;
     }
 }
