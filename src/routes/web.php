@@ -25,9 +25,8 @@ Route::get('password/recover/{token}', [CaronteController::class, 'passwordRecov
 Route::post('password/recover/{token}', [CaronteController::class, 'passwordRecover']);
 
 Route::get('get-token', [CaronteController::class, 'getToken'])->name('caronte.token.get')
-    ->withoutMiddleware(
+    ->middleware(
         [
-            Illuminate\Session\Middleware\StartSession::class,
-            Illuminate\View\Middleware\ShareErrorsFromSession::class,
+            \Equidna\Caronte\Http\Middleware\NoHistory::class
         ]
     );
