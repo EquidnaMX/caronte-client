@@ -27,6 +27,6 @@ Route::post('password/recover/{token}', [CaronteController::class, 'passwordReco
 Route::get('get-token', [CaronteController::class, 'getToken'])->name('caronte.token.get')
     ->middleware(
         [
-            \Equidna\Caronte\Http\Middleware\NoHistory::class
+            \Equidna\Toolkit\Http\Middleware\ExcludeFromHistory::class,
         ]
     );

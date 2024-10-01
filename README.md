@@ -53,10 +53,14 @@ Caronte uses environment variables to configure itself, these are the options th
 
 Validates that the user is authenticated with a valid JWT token and has _any_ permission associated with the CARONTE_APP_ID provided in configuration
 
-> Route::put('/dashboard',
-> function (string $id) {
-> // ...
-> })->middleware('Caronte.ValidateSession');
+```
+Route::put(
+  '/dashboard',
+  function (string $id) {
+    // ...
+  }
+)->middleware('Caronte.ValidateSession');
+```
 
 Token is automatically renewed during the validation process if it has expired, in this case the new token will be available on a response header named **_new_token_**
 
@@ -70,10 +74,14 @@ Token is automatically renewed during the validation process if it has expired, 
 
 Validates that the user has **_any_** of the provided roles. _root_ role is allways added to the list, therefore a user with the root role will _allways_ be considered valid.
 
-> Route::put('/users',
-> function (string $id) {
-> // ...
-> })->middleware('Caronte.ValidateRoles:administrator,manager');
+```
+Route::put(
+  '/users',
+  function (string $id) {
+    // ...
+  }
+)->middleware('Caronte.ValidateRoles:administrator,manager');
+```
 
 ---
 

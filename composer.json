@@ -1,7 +1,7 @@
 {
   "name": "equidna/caronte-client",
   "description": "Caronte authentication client",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "type": "library",
   "license": "MIT",
   "authors": [
@@ -13,7 +13,7 @@
   "require": {
     "php": "^8.0",
     "illuminate/support": "^11.21",
-    "equidna/toolkit": "^0.1.1",
+    "equidna/toolkit": "^0.2.0",
     "lcobucci/jwt": "^5.3",
     "lcobucci/clock": "^3.2"
   },
