@@ -11,6 +11,19 @@ namespace Equidna\Caronte\Facades;
 use Illuminate\Support\Facades\Facade;
 use Equidna\Caronte\Caronte as CaronteClass;
 
+/**
+ * @method static \Lcobucci\JWT\Token\Plain getToken()
+ * @method static \stdClass getUser()
+ * @method static string getRouteUser()
+ * @method static void saveToken(string $token_str)
+ * @method static void clearToken()
+ * @method static void setTokenWasExchanged()
+ * @method static bool tokenWasExchanged()
+ * @method static string echo(string $message)
+ * @method static void updateUserData(\stdClass $user)
+ *
+ * @see Equidna\Caronte\Caronte
+ */
 class Caronte extends Facade
 {
     /**
