@@ -1,7 +1,7 @@
 {
   "name": "equidna/caronte-client",
   "description": "Caronte authentication client",
-  "version": "1.0.7",
+  "version": "1.1.0",
   "type": "library",
   "license": "MIT",
   "authors": [
@@ -27,6 +27,11 @@
     "psr-4": {
       "Equidna\\Caronte\\": "src/"
     }
+  },
+  "scripts": {
+    "post-autoload-dump": [
+      "@php artisan vendor:publish --provider=\"Equidna\\Caronte\\Providers\\CaronteServiceProvider\" --tag=caronte:roles"
+    ]
   },
   "extra": {
     "laravel": {

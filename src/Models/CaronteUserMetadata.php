@@ -3,15 +3,13 @@
 /**
  * @author Gabriel Ruelas
  * @license MIT
- * @version 1.0.0
- *
+ * @version 1.1.0
  */
 
 namespace Equidna\Caronte\Models;
 
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
-use Equidna\Caronte\Models\User;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Equidna\Toolkit\Traits\Database\HasCompositePrimaryKey;
 
 class CaronteUserMetadata extends Model

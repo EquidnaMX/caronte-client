@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * @author Gabriel Ruelas
+ * @license MIT
+ * @version 1.1.0
+ */
+
 namespace Equidna\Caronte;
 
 use Illuminate\Support\Str;

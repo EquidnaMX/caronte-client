@@ -3,7 +3,7 @@
 /**
  * @author Gabriel Ruelas
  * @license MIT
- * @version 1.0.5 *
+ * @version 1.1.0
  */
 
 namespace Equidna\Caronte;
@@ -18,7 +18,6 @@ use Equidna\Toolkit\Helpers\RouteHelper;
 use Equidna\Toolkit\Helpers\ResponseHelper;
 use Equidna\Caronte\Facades\Caronte;
 use Exception;
-use Illuminate\Support\Facades\Redirect;
 
 /**
  * This class is responsible for making basic requests to the Caronte server.
@@ -53,8 +52,8 @@ class CaronteRequest
                     'verify' => !config('caronte.ALLOW_HTTP_REQUESTS')
                 ]
             )->post(
-                config('caronte.URL') . 'api/' . config('caronte.VERSION') . '/login',
-                [
+                url: config('caronte.URL') . 'api/' . config('caronte.VERSION') . '/login',
+                data: [
                     'email'    => $request->email,
                     'password' => $request->password,
                     'app_id'   => config('caronte.APP_ID')
@@ -98,8 +97,8 @@ class CaronteRequest
                     'verify' => !config('caronte.ALLOW_HTTP_REQUESTS')
                 ]
             )->post(
-                config('caronte.URL') . 'api/' . config('caronte.VERSION') . '/2fa',
-                [
+                url: config('caronte.URL') . 'api/' . config('caronte.VERSION') . '/2fa',
+                data: [
                     'email'     => $request->email,
                     'app_id'    => config('caronte.APP_ID'),
                     'app_url'   => config('app.url'),
@@ -147,8 +146,8 @@ class CaronteRequest
                     'verify' => !config('caronte.ALLOW_HTTP_REQUESTS')
                 ]
             )->post(
-                config('caronte.URL') . 'api/' . config('caronte.VERSION') . '/2fa/' . $token,
-                [
+                url: config('caronte.URL') . 'api/' . config('caronte.VERSION') . '/2fa/' . $token,
+                data: [
                     'app_id'    => config('caronte.APP_ID'),
                 ]
             );
@@ -192,8 +191,8 @@ class CaronteRequest
                     'verify' => !config('caronte.ALLOW_HTTP_REQUESTS')
                 ]
             )->post(
-                config('caronte.URL') . 'api/' . config('caronte.VERSION') . '/password/recover',
-                [
+                url: config('caronte.URL') . 'api/' . config('caronte.VERSION') . '/password/recover',
+                data: [
                     'email'   => $request->email,
                     'app_id'  => config('caronte.APP_ID'),
                     'app_url' => config('app.url')
@@ -221,7 +220,6 @@ class CaronteRequest
     /**
      * Validates a password recovery token by making an HTTP request to the Caronte API.
      *
-     * @param Request $request The incoming HTTP request.
      * @param string $token The password recovery token to validate.
      * @return Response|View Returns a Response object if the request is an API call,
      *                       or a View object if the request is a web call.
@@ -229,7 +227,7 @@ class CaronteRequest
      * @throws RequestException If the HTTP request to the Caronte API fails.
      * @throws Exception If any other exception occurs during the process.
      */
-    public static function passwordRecoverTokenValidation(Request $request, $token): Response|RedirectResponse|View
+    public static function passwordRecoverTokenValidation(string $token): Response|RedirectResponse|View
     {
         try {
             $caronte_response = HTTP::withOptions(
@@ -237,7 +235,7 @@ class CaronteRequest
                     'verify' => !config('caronte.ALLOW_HTTP_REQUESTS')
                 ]
             )->get(
-                config('caronte.URL') . 'api/' . config('caronte.VERSION') . '/password/recover/' . $token
+                url: config('caronte.URL') . 'api/' . config('caronte.VERSION') . '/password/recover/' . $token
             );
 
             if ($caronte_response->failed()) {
@@ -279,8 +277,8 @@ class CaronteRequest
                     'verify' => !config('caronte.ALLOW_HTTP_REQUESTS')
                 ]
             )->post(
-                config('caronte.URL') . 'api/' . config('caronte.VERSION') . '/password/recover/' . $token,
-                [
+                url: config('caronte.URL') . 'api/' . config('caronte.VERSION') . '/password/recover/' . $token,
+                data: [
                     'password'              => $request->password,
                     'password_confirmation' => $request->password
                 ]
@@ -307,11 +305,10 @@ class CaronteRequest
     /**
      * Logs out the user.
      *
-     * @param Request $request The request object.
      * @param bool $logout_all_sessions (optional) Whether to logout from all sessions. Default is false.
      * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse The response object or redirect response.
      */
-    public static function logout(Request $request, $logout_all_sessions = false): Response|RedirectResponse
+    public static function logout(bool $logout_all_sessions = false): Response|RedirectResponse
     {
         try {
             $caronte_response = HTTP::withOptions(
@@ -323,7 +320,7 @@ class CaronteRequest
                     'Authorization' => "Bearer " . Caronte::getToken()->toString()
                 ]
             )->get(
-                config('caronte.URL') . 'api/' . config('caronte.VERSION') . '/logout' . ($logout_all_sessions ? 'All' : '')
+                url: config('caronte.URL') . 'api/' . config('caronte.VERSION') . '/logout' . ($logout_all_sessions ? 'All' : '')
             );
 
             if ($caronte_response->failed()) {
@@ -344,5 +341,28 @@ class CaronteRequest
         }
 
         return redirect(config('caronte.LOGIN_URL'))->with(['success' => $response]);
+    }
+
+    public static function notifyClientConfiguration(): string
+    {
+
+        $caronte_response = HTTP::withOptions(
+            [
+                'verify' => !config('caronte.ALLOW_HTTP_REQUESTS')
+            ]
+        )->withHeaders(
+            [
+                'Authorization' => "Bearer " . base64_encode(config('caronte.APP_ID') . ':' . config('caronte.APP_SECRET'))
+            ]
+        )->post(
+            url: config('caronte.URL') . 'api/' . config('caronte.VERSION') . '/client-configuration',
+            data: config('caronte-roles')
+        );
+
+        if ($caronte_response->failed()) {
+            throw new RequestException($caronte_response);
+        }
+
+        return $caronte_response->body();
     }
 }

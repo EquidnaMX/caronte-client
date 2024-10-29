@@ -1,8 +1,0 @@
-.main-content {
-  display: grid;
-  grid-area: main;
-  overflow-y: auto;
-  height: fit-content;
-  max-height: clamp(60vh, 1000px, 70vh);
-  background-color: red;
-}

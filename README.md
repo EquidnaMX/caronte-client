@@ -1,13 +1,77 @@
 # Caronte client
 
----
+**Caronte** is a JWT token based authentication system written in PHP using the Laravel Framework.
 
-Caronte is a JWT token based authentication system written in Laravel.
-This client consumes the Caronte API to authenticate other systems and provides two middlewares for validating user acces.
+This package provides all the necesary tools to handle user authentication and permission validation for a new Laravel application.
+
+## Installation
+
+To install the package simpy call:
+
+```
+composer require equidna/caronte-client
+```
+
+After installation is complete you must run:
+
+```
+php artisan vendor:publish --tag=caronte:roles
+```
+
+to create te default `caronte-roles.php` file in your config path.
+
+If you plan to use the `UPDATE_USER` feature and/or the `CaronteUserHelper` you need to have the apropriate tables on your database.
+You can create those tables using the provided migrations by using the command:
+
+```
+php artisan migrate
+```
+
+There are other files you may want to publish to fully customize your installation
+
+### Views
+
+```
+php artisan vendor:publish --tag=caronte:views
+```
+
+Publishes views used by the package to the `/resources/views/vendor/caronte` folder
+
+- **base**: Base layout for all views
+- **login**: Default login page using email and password
+- **2fa-login**: Email 2FA based login page
+- **password-recover-request**: Form with email field to request a resset validation token
+- **password-recover**: Form to input new password after password resset is requested and validated
+- **messages**: Frame to show errors and sucess messages
+
+### Migrations
+
+Two migrations are provided to generate the bare miminum structure for the `CaronteUserHelper`
+
+- **User**
+- **UserMetadata**
+
+```
+php artisan vendor:publish --tag=caronte:migrations
+```
+
+### Assets
+
+```
+php artisan vendor:publish --tag=caronte:assets
+```
+
+### Publish everything
+
+```
+php artisan vendor:publish --tag=caronte
+```
 
 ## Configuration
 
-Caronte uses environment variables to configure itself, these are the options that you can configure.
+### .env
+
+Caronte uses environment variables to configure itself, these are the options that you can configure on your **`.env`** file.
 
 | Key                           | Default    | Description                                                                                                                                                               | V1        | V2           |
 | ----------------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------- | ------------ |
@@ -25,7 +89,16 @@ Caronte uses environment variables to configure itself, these are the options th
 | `CARONTE_LOGIN_URL`           | `'/login'` | Assigned route for login.                                                                                                                                                 | Optional  | Optional     |
 | `CARONTE_UPDATE_USER`         | `false`    | When enabled, a record of users who have logged into the system is kept in the local database. (It is necessary to run the caronte-client migrations to use this feature) | Optional  | Optional     |
 
----
+### caronte-roles.php
+
+This file conatins an asociative array where keys are the `name` of the role used in the `PermissionHelper::hasRoles()` function and
+`ValidateRoles` middleware, and the value the description.
+
+Changes on this file must be notified to the **Caronte** authentication server via de following command:
+
+```
+php artisan caronte:notify-client-configuration
+```
 
 ## Routes
 
@@ -39,19 +112,18 @@ Caronte uses environment variables to configure itself, these are the options th
 | POST     | password/recover         |                          | Pasword recovery endpoint                                         |
 | GET      | password/recover/{token} |                          | Returns the view to enter a new password if token is valid        |
 | POST     | password/recover/{token} |                          | Updates user password if token is valid                           |
-| GET/POST | logout                   |                          | Logouts the user and clear token cookie                           |
+| GET/POST | logout                   |                          | Logouts the user and clears token cookie                          |
 | GET      | get-token                | caronte.token.get        | Returns the current user token                                    |
-
----
 
 ## Middleware
 
 ### ValidateSession
 
-**Main Class:** Equidna\Caronte\Http\Middleware\ValidateSession
-**Alias:** Caronte.ValidateSession
+**Main Class**: `Equidna\Caronte\Http\Middleware\ValidateSession`
 
-Validates that the user is authenticated with a valid JWT token and has _any_ permission associated with the CARONTE_APP_ID provided in configuration
+**Alias**: `Caronte.ValidateSession`
+
+Validates that the user is authenticated with a valid JWT token and has _any_ permission associated with the `CARONTE_APP_ID` provided in configuration
 
 ```
 Route::put(
@@ -64,13 +136,13 @@ Route::put(
 
 Token is automatically renewed during the validation process if it has expired, in this case the new token will be available on a response header named **_new_token_**
 
----
-
 ### ValidateRoles
 
-**Main Class:** Equidna\Caronte\Http\Middleware\ValidateRoles
-**Alias:** Caronte.ValidateRoles
-**Parameters:** a comma separated list or array of permissions to validate
+**Main Class**: `Equidna\Caronte\Http\Middleware\ValidateRoles`
+
+**Alias**: `Caronte.ValidateRoles`
+
+**Parameters**: a comma separated list or array of permissions to validate
 
 Validates that the user has **_any_** of the provided roles. _root_ role is allways added to the list, therefore a user with the root role will _allways_ be considered valid.
 
@@ -82,8 +154,6 @@ Route::put(
   }
 )->middleware('Caronte.ValidateRoles:administrator,manager');
 ```
-
----
 
 ## Helpers
 
@@ -108,8 +178,6 @@ This package provides helper classes for simplifying some common actions with us
 - **hasRoles(mixed $roles):**_bool_
   Validates if the current user has any of the provided roles **$roles** can be provided as a comma separated list of values or an array
   **root** role is always added to the list therefore an user with the root role will allways return true.
-
----
 
 ## Facades
 
@@ -139,3 +207,7 @@ This package provides helper classes for simplifying some common actions with us
 
 - **echo(string $message):**_string_
   Returns the provided message
+
+## Commands
+
+- **caronte:notify-client-configuration**: Updates aplication roles on **Caronte** server based on information provided in `caronte-roles.php` configuration file.

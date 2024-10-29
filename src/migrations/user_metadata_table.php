@@ -20,11 +20,11 @@ return new class extends Migration
     {
         Schema::create('UsersMetadata', function (Blueprint $table) {
             $table->string('uri_user', 40);
+            $table->string('scope', 128);
             $table->string('key', 45);
             $table->string('value', 45);
-            $table->string('scope', 128);
+            $table->primary(['uri_user', 'scope', 'key']);
             $table->engine('MyISAM');
-            $table->primary(['uri_user', 'key']);
         });
     }
 

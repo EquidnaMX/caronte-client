@@ -3,7 +3,7 @@
 /**
  * @author Gabriel Ruelas
  * @license MIT
- * @version 1.0.5
+ * @version 1.1.0
  */
 
 namespace Equidna\Caronte\Http\Controllers;
@@ -70,10 +70,9 @@ class CaronteController extends Controller
     /**
      * Display the password recovery request form.
      *
-     * @param \Illuminate\Http\Request $request The HTTP request instance.
      * @return \Illuminate\View\View The view for the password recovery request form.
      */
-    public function passwordRecoverRequestForm(Request $request): View
+    public function passwordRecoverRequestForm(): View
     {
         return view('caronte::password-recover-request');
     }
@@ -101,7 +100,7 @@ class CaronteController extends Controller
      */
     public function passwordRecoverTokenValidation(Request $request, string $token): Response|RedirectResponse|View
     {
-        return CaronteRequest::passwordRecoverTokenValidation(request: $request, token: $token);
+        return CaronteRequest::passwordRecoverTokenValidation(token: $token);
     }
 
     /**
@@ -126,10 +125,7 @@ class CaronteController extends Controller
      */
     public function logout(Request $request): Response|RedirectResponse
     {
-        return CaronteRequest::logout(
-            request: $request,
-            logout_all_sessions: $request->filled('all')
-        );
+        return CaronteRequest::logout(logout_all_sessions: $request->filled('all'));
     }
 
     /**
@@ -137,10 +133,9 @@ class CaronteController extends Controller
      *
      * This method handles a request to obtain a token by calling the Caronte service's getToken method.
      *
-     * @param \Illuminate\Http\Request $request The incoming HTTP request.
      * @return \Illuminate\Http\Response The response containing the token.
      */
-    public function getToken(Request $request): Response
+    public function getToken(): Response
     {
         return Response(Caronte::getToken()->toString(), 200);
     }

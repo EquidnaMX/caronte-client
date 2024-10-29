@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * @author Gabriel Ruelas
+ * @license MIT
+ * @version 1.1.0
+ * gruelas@gruelasjr
+ *
+ */
+
 namespace Equidna\Caronte;
 
 use Illuminate\Http\Client\RequestException;
