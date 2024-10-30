@@ -27,7 +27,7 @@ class PermissionHelper
     public static function hasApplication(): bool
     {
         $user = Caronte::getUser();
-        $uri_application = sha1(config('caronte.APP_ID'));
+        $app_id = sha1(config('caronte.APP_ID'));
 
         if (is_null($user)) {
             throw new Exception('No user provided');
@@ -36,7 +36,7 @@ class PermissionHelper
         $roles = collect($user->roles);
 
         return $roles->contains(
-            fn($role) => $role->uri_application === $uri_application
+            fn($role) => ($role->uri_application ?? $role->app_id) === $app_id
         );
     }
 
@@ -48,8 +48,8 @@ class PermissionHelper
      */
     public static function hasRoles(mixed $roles): bool
     {
-        $user = Caronte::getUser();
-        $uri_application = sha1(config('caronte.APP_ID'));
+        $user   = Caronte::getUser();
+        $app_id = sha1(config('caronte.APP_ID'));
 
         if (is_null($user)) {
             throw new Exception('No user provided');
@@ -69,7 +69,7 @@ class PermissionHelper
         $roles_collection = collect($user->roles);
 
         return $roles_collection->contains(
-            fn($user_role) => in_array($user_role->name, $roles) && $uri_application === $user_role->uri_application
+            fn($user_role) => in_array($user_role->name, $roles) && ($app_id === ($user_role->uri_application ?? $user_role->app_id))
         );
     }
 }
