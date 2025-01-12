@@ -13,7 +13,7 @@
   "require": {
     "php": "^8.0",
     "illuminate/support": "^11.21",
-    "equidna/toolkit": "^0.2.0",
+    "equidna/toolkit": ">=0.3.5",
     "lcobucci/jwt": "^5.3",
     "lcobucci/clock": "^3.2"
   },
@@ -29,9 +29,7 @@
     }
   },
   "scripts": {
-    "post-autoload-dump": [
-      "@php artisan vendor:publish --provider=\"Equidna\\Caronte\\Providers\\CaronteServiceProvider\" --tag=caronte:roles"
-    ]
+    "post-autoload-dump": []
   },
   "extra": {
     "laravel": {
