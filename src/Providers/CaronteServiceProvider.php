@@ -34,7 +34,8 @@ class CaronteServiceProvider extends ServiceProvider
     {
         //Registers the Caronte alias and facade.
         $loader = AliasLoader::getInstance();
-        $loader->alias('Equidna\Caronte', \Equidna\Caronte\Facades\Caronte::class);
+        $loader->alias('Caronte', \Equidna\Caronte\Facades\Caronte::class);
+        $loader->alias('PermissionHelper', \Equidna\Caronte\Helpers\PermissionHelper::class);
 
         //Registers the middleware
         $router->aliasMiddleware('Caronte.ValidateSession', \Equidna\Caronte\Http\Middleware\ValidateSession::class);
