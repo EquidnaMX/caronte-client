@@ -1,4 +1,4 @@
-# Caronte client
+# WARNING UPRGRADE FROM 1.1._ TO 1.2._ MAY BRAKE YOUR APPLICATION DUE TO NAMESPACE CHANGE FOR FACADE Equidna\Caronte to Caronte a
 
 **Caronte** is a JWT token based authentication system written in PHP using the Laravel Framework.
 
