@@ -26,13 +26,19 @@ class ValidateSession
         try {
             $token = Caronte::getToken();
         } catch (Exception $e) {
-            return ResponseHelper::unautorized($e->getMessage());
+            return ResponseHelper::unautorized(
+                message: $e->getMessage(),
+                forward_url: config('caronte.LOGIN_URL')
+            );
         }
 
         if (PermissionHelper::hasApplication()) {
             $response = $next($request);
         } else {
-            $response = ResponseHelper::forbidden('User does not have access to this application');
+            $response = ResponseHelper::forbidden(
+                message: 'User does not have access to this application',
+                forward_url: config('caronte.LOGIN_URL')
+            );
         }
 
         if (Caronte::tokenWasExchanged() && RouteHelper::isAPI()) {
