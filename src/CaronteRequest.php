@@ -352,10 +352,10 @@ class CaronteRequest
             ]
         )->withHeaders(
             [
-                'Authorization' => "Bearer " . base64_encode(config('caronte.APP_ID') . ':' . config('caronte.APP_SECRET'))
+                'Authorization' => "Bearer " . base64_encode(sha1(config('caronte.APP_ID')) . ':' . config('caronte.APP_SECRET'))
             ]
         )->post(
-            url: config('caronte.URL') . 'api/' . config('caronte.VERSION') . '/client-configuration',
+            url: config('caronte.URL') . 'api/A3/' . config('caronte.VERSION') . '/client-configuration',
             data: config('caronte-roles')
         );
 
