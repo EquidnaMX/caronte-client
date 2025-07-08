@@ -68,7 +68,7 @@ class CaronteRequest
         } catch (RequestException $e) {
             return ResponseHelper::badRequest(message: $e->response->body());
         } catch (Exception $e) {
-            return ResponseHelper::unautorized($e->getMessage());
+            return ResponseHelper::ununauthorized($e->getMessage());
         }
 
         if (RouteHelper::isAPI()) {
@@ -160,7 +160,7 @@ class CaronteRequest
         } catch (RequestException $e) {
             return ResponseHelper::badRequest($e->response->body());
         } catch (Exception $e) {
-            return ResponseHelper::unautorized($e->getMessage());
+            return ResponseHelper::ununauthorized($e->getMessage());
         }
 
         if (RouteHelper::isAPI()) {
@@ -331,7 +331,7 @@ class CaronteRequest
         } catch (RequestException $e) {
             return ResponseHelper::badRequest($e->response->body());
         } catch (Exception $e) {
-            return ResponseHelper::unautorized($e->getMessage());
+            return ResponseHelper::ununauthorized($e->getMessage());
         }
 
         Caronte::clearToken();
