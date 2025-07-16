@@ -26,7 +26,7 @@ class ValidateSession
         try {
             $token = Caronte::getToken();
         } catch (Exception $e) {
-            return ResponseHelper::ununauthorized(
+            return ResponseHelper::unauthorized(
                 message: $e->getMessage(),
                 forward_url: config('caronte.LOGIN_URL')
             );
