@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('uri_user', 40)->primary();
             $table->string('name', 150);
             $table->string('email', 150);
-            $table->engine('MyISAM');
+            $table->engine = 'InnoDB';
         });
     }
 

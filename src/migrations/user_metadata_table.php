@@ -24,7 +24,7 @@ return new class extends Migration
             $table->string('key', 45);
             $table->string('value', 45);
             $table->primary(['uri_user', 'scope', 'key']);
-            $table->engine('MyISAM');
+            $table->engine = 'InnoDB';
         });
     }
 

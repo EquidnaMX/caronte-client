@@ -29,7 +29,7 @@ class CaronteUserHelper
     public static function getUserName(string $uri_user): string
     {
         try {
-            $user = CaronteUser::firstOrFail($uri_user);
+            $user = CaronteUser::where('uri_user', $uri_user)->firstOrFail();
         } catch (ModelNotFoundException $e) {
             return 'User not found';
         }
@@ -46,7 +46,7 @@ class CaronteUserHelper
     public static function getUserEmail(string $uri_user): string
     {
         try {
-            $user = CaronteUser::firstOrFail($uri_user);
+            $user = CaronteUser::where('uri_user', $uri_user)->firstOrFail();
         } catch (ModelNotFoundException $e) {
             return 'User not found';
         }
