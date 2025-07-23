@@ -19,9 +19,22 @@ use Exception;
 use Closure;
 use Equidna\Toolkit\Exceptions\UnauthorizedException;
 
-//This class validates the presence of a caronte token in the request and checks if the user has access to the application.
+/**
+ * Middleware to validate the presence of a Caronte token and user access to the application.
+ *
+ * @author Gabriel Ruelas
+ * @license MIT
+ * @version 1.0.0
+ */
 class ValidateSession
 {
+    /**
+     * Handle an incoming request and check for a valid Caronte token and application access.
+     *
+     * @param Request $request HTTP request instance.
+     * @param Closure $next Next middleware closure.
+     * @return Response
+     */
     public function handle(Request $request, Closure $next): Response
     {
         try {

@@ -19,10 +19,10 @@ use Equidna\Caronte\Facades\Caronte;
 class CaronteController extends Controller
 {
     /**
-     * Displays the login form.
+     * Show the login form view.
      *
-     * @param \Illuminate\Http\Request $request The HTTP request object.
-     * @return \Illuminate\Contracts\View\View The login form view.
+     * @param Request $request HTTP request object.
+     * @return View Login form view.
      */
     public function loginForm(Request $request): View
     {
@@ -38,14 +38,11 @@ class CaronteController extends Controller
     }
 
     /**
-     * Handle the login request.
+     * Handle the login request, using 2FA if enabled.
      *
-     * This method processes the login request and determines whether to use
-     * two-factor authentication (2FA) based on the configuration setting.
-     *
-     * @param \Illuminate\Http\Request $request The HTTP request instance.
-     * @return \Symfony\Component\HttpFoundation\Response|\Illuminate\Http\RedirectResponse
-     * */
+     * @param Request $request HTTP request instance.
+     * @return Response|RedirectResponse
+     */
     public function login(Request $request): Response|RedirectResponse
     {
         if (config('caronte.USE_2FA')) {
@@ -56,11 +53,11 @@ class CaronteController extends Controller
     }
 
     /**
-     * Logs in the user using a two-factor authentication token.
+     * Log in the user using a two-factor authentication token.
      *
-     * @param \Illuminate\Http\Request $request The HTTP request object.
-     * @param string $token The two-factor authentication token.
-     * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse The HTTP response or a redirect response.
+     * @param Request $request HTTP request object.
+     * @param string $token Two-factor authentication token.
+     * @return Response|RedirectResponse
      */
     public function twoFactorTokenLogin(Request $request, string $token): Response|RedirectResponse
     {
@@ -68,9 +65,9 @@ class CaronteController extends Controller
     }
 
     /**
-     * Display the password recovery request form.
+     * Show the password recovery request form.
      *
-     * @return \Illuminate\View\View The view for the password recovery request form.
+     * @return View Password recovery request form view.
      */
     public function passwordRecoverRequestForm(): View
     {
@@ -78,10 +75,10 @@ class CaronteController extends Controller
     }
 
     /**
-     * Handles the password recovery request.
+     * Handle the password recovery request.
      *
-     * @param Request $request The HTTP request object containing the password recovery details.
-     * @return Response|RedirectResponse The response object or a redirect response.
+     * @param Request $request HTTP request with recovery details.
+     * @return Response|RedirectResponse
      */
     public function passwordRecoverRequest(Request $request): Response|RedirectResponse
     {
@@ -91,12 +88,9 @@ class CaronteController extends Controller
     /**
      * Validate the password recovery token.
      *
-     * This method validates the password recover token against Caronte API.
-     *
-     * @param \Illuminate\Http\Request $request The HTTP request instance.
-     * @param string $token The password recovery token to be validated.
-     *
-     * @return \Illuminate\Http\Response|\Illuminate\View\View The response or view returned by the CaronteRequest service.
+     * @param Request $request HTTP request instance.
+     * @param string $token Password recovery token.
+     * @return Response|RedirectResponse|View
      */
     public function passwordRecoverTokenValidation(Request $request, string $token): Response|RedirectResponse|View
     {
@@ -106,11 +100,9 @@ class CaronteController extends Controller
     /**
      * Handle the password recovery process.
      *
-     * This method delegates the password recovery request to the CaronteRequest service.
-     *
-     * @param Request $request The HTTP request instance.
-     * @param string $token The password recovery token.
-     * @return Response|RedirectResponse The response after processing the password recovery.
+     * @param Request $request HTTP request instance.
+     * @param string $token Password recovery token.
+     * @return Response|RedirectResponse
      */
     public function passwordRecover(Request $request, string $token): Response|RedirectResponse
     {
@@ -118,10 +110,10 @@ class CaronteController extends Controller
     }
 
     /**
-     * Logout the user.
+     * Log out the user.
      *
-     * @param \Illuminate\Http\Request $request
-     * @return \Symfony\Component\HttpFoundation\Response|\Illuminate\Http\RedirectResponse
+     * @param Request $request HTTP request object.
+     * @return Response|RedirectResponse
      */
     public function logout(Request $request): Response|RedirectResponse
     {
@@ -131,9 +123,7 @@ class CaronteController extends Controller
     /**
      * Retrieve a token from the Caronte service.
      *
-     * This method handles a request to obtain a token by calling the Caronte service's getToken method.
-     *
-     * @return \Illuminate\Http\Response The response containing the token.
+     * @return Response Response containing the token.
      */
     public function getToken(): Response
     {

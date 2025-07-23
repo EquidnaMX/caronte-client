@@ -12,6 +12,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Equidna\Toolkit\Traits\Database\HasCompositePrimaryKey;
 
+/**
+ * Eloquent model for Caronte user metadata.
+ *
+ * @author Gabriel Ruelas
+ * @license MIT
+ * @version 1.1.0
+ */
 class CaronteUserMetadata extends Model
 {
     use HasCompositePrimaryKey;
@@ -28,6 +35,11 @@ class CaronteUserMetadata extends Model
         'scope'
     ];
 
+    /**
+     * Get the user relationship for this metadata.
+     *
+     * @return BelongsTo
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(CaronteUser::class, 'uri_user');

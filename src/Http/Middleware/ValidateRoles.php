@@ -17,13 +17,26 @@ use Equidna\Toolkit\Exceptions\UnauthorizedException;
 use Exception;
 use Closure;
 
-//This class validates if the user has the necessary roles to access a feature.
-// It must be allways used after ValidateSession middleware.
+/**
+ * Middleware to validate if the user has the required roles to access a feature.
+ * Should always be used after ValidateSession middleware.
+ *
+ * @author Gabriel Ruelas
+ * @license MIT
+ * @version 1.0.0
+ */
 class ValidateRoles
 {
+    /**
+     * Handle an incoming request and check user roles.
+     *
+     * @param Request $request HTTP request instance.
+     * @param Closure $next Next middleware closure.
+     * @param mixed ...$roles Required roles.
+     * @return Response
+     */
     public function handle(Request $request, Closure $next, ...$roles): Response
     {
-
         try {
             if (!PermissionHelper::hasRoles(roles: $roles)) {
                 return ResponseHelper::forbidden(

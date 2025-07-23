@@ -20,20 +20,15 @@ class PermissionHelper
     }
 
     /**
-     * Check if the user has any roles assigned for a specific application.
+     * Determine if the user has any roles for the current application.
      *
-     * @return bool True if the user has roles assigned for the application, false otherwise.
+     * @return bool True if user has roles for the application, false otherwise.
      */
     public static function hasApplication(): bool
     {
-        $user = Caronte::getUser();
+        $user   = Caronte::getUser();
         $app_id = sha1(config('caronte.APP_ID'));
-
-        if (is_null($user)) {
-            throw new UnauthorizedException('No user provided');
-        }
-
-        $roles = collect($user->roles);
+        $roles  = collect($user->roles);
 
         return $roles->contains(
             fn($role) => ($role->uri_application ?? $role->app_id) === $app_id
@@ -41,19 +36,15 @@ class PermissionHelper
     }
 
     /**
-     * Check if the user has any of the specified roles for a given application.
+     * Determine if the user has any of the specified roles for the application.
      *
      * @param mixed $roles Roles to check (comma-separated string or array).
-     * @return bool True if the user has any of the specified roles, false otherwise.
+     * @return bool True if user has any of the specified roles, false otherwise.
      */
     public static function hasRoles(mixed $roles): bool
     {
         $user   = Caronte::getUser();
         $app_id = sha1(config('caronte.APP_ID'));
-
-        if (is_null($user)) {
-            throw new UnauthorizedException('No user provided');
-        }
 
         if (!is_array($roles)) {
             $roles = explode(",", $roles);

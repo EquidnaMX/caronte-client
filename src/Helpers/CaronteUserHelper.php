@@ -21,10 +21,10 @@ class CaronteUserHelper
     }
 
     /**
-     * Retrieves the name of a user based on the provided URI.
+     * Get the user's name by URI.
      *
-     * @param string $uri_user The URI of the user.
-     * @return string The name of the user or `User not found` user does not exists.
+     * @param string $uri_user User URI.
+     * @return string User name, or 'User not found' if not found.
      */
     public static function getUserName(string $uri_user): string
     {
@@ -38,10 +38,10 @@ class CaronteUserHelper
     }
 
     /**
-     * Retrieves the email of a user based on the provided URI.
+     * Get the user's email by URI.
      *
-     * @param string $uri_user The URI of the user.
-     * @return string The email of the user  or `User not found` user does not exists.
+     * @param string $uri_user User URI.
+     * @return string User email, or 'User not found' if not found.
      */
     public static function getUserEmail(string $uri_user): string
     {
@@ -55,11 +55,11 @@ class CaronteUserHelper
     }
 
     /**
-     * Retrieves the metadata value for a specific user and key.
+     * Get a user's metadata value by URI and key.
      *
-     * @param string $uri_user The URI of the user.
-     * @param string $key The key of the metadata.
-     * @return string|null The value of the metadata, or null if not found.
+     * @param string $uri_user User URI.
+     * @param string $key Metadata key.
+     * @return string|null Metadata value, or null if not found.
      */
     public static function getUserMetadata(string $uri_user, string $key): string|null
     {

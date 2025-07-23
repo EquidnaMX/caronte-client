@@ -37,11 +37,11 @@ class CaronteToken
     }
 
     /**
-     * Validates a token.
+     * Validate a JWT token string and return the validated token.
      *
-     * @param string $raw_token The raw token to validate.
-     * @return Plain The validated token.
-     * @throws Exception If the token fails the required constraints.
+     * @param string $raw_token Raw JWT token string.
+     * @return Plain Validated token instance.
+     * @throws NotAcceptableException|UnprocessableEntityException If the token is invalid or fails constraints.
      */
     public static function validateToken(string $raw_token): Plain
     {
@@ -77,11 +77,11 @@ class CaronteToken
     }
 
     /**
-     * Exchanges a raw token for a validated token using the Caronte API.
+     * Exchange a raw token for a validated token using the Caronte API.
      *
-     * @param string $raw_token The raw token to be exchanged.
-     * @return Plain The validated token.
-     * @throws Exception If the token exchange fails.
+     * @param string $raw_token Raw JWT token string.
+     * @return Plain Validated token instance.
+     * @throws UnprocessableEntityException If the token exchange fails.
      */
     public static function exchangeToken(string $raw_token): Plain
     {
@@ -121,12 +121,11 @@ class CaronteToken
     }
 
     /**
-     * Decodes a token using the provided configuration and raw token string.
+     * Decode a raw JWT token string.
      *
-     * @param Configuration $config The configuration object used for decoding the token.
-     * @param string $raw_token The raw token string to be decoded.
-     * @return Plain The decoded token.
-     * @throws Exception If the token is not provided, is malformed, is invalid, or does not contain a 'user' claim.
+     * @param string $raw_token Raw JWT token string.
+     * @return Plain Decoded token instance.
+     * @throws BadRequestException|UnprocessableEntityException If the token is missing, malformed, or invalid.
      */
     public static function decodeToken(string $raw_token): Plain
     {
@@ -152,10 +151,9 @@ class CaronteToken
     }
 
     /**
-     * Retrieves the configuration for generating a JWT token
+     * Get the JWT configuration for token operations.
      *
-     * @param string $signing_key The signing key used for generating the token.
-     * @return Configuration The configuration object for generating the token.
+     * @return Configuration JWT configuration instance.
      */
     public static function getConfig(): Configuration
     {
@@ -174,10 +172,9 @@ class CaronteToken
     }
 
     /**
-     * Retrieves the constraints for validating a JWT token.
+     * Get the constraints for validating a JWT token.
      *
-     * @param Configuration $config The configuration object.
-     * @return array The array of validation constraints.
+     * @return array Array of validation constraints.
      */
     public static function getConstraints(): array
     {

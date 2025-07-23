@@ -29,7 +29,6 @@ return new class extends Migration
             Schema::table('Users', function (Blueprint $table) {
                 if (!Schema::hasColumn('Users', 'uri_user')) {
                     $table->string('uri_user', 40);
-                    // Note: Adding a primary key to an existing table with data may fail
                 }
                 if (!Schema::hasColumn('Users', 'name')) {
                     $table->string('name', 150);

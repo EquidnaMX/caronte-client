@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Facade;
 use Equidna\Caronte\Caronte as CaronteClass;
 
 /**
+ * Facade for the Caronte client, providing static access to authentication and user methods.
+ *
  * @method static \Lcobucci\JWT\Token\Plain getToken()
  * @method static \stdClass getUser()
  * @method static string getRouteUser()
@@ -20,7 +22,7 @@ use Equidna\Caronte\Caronte as CaronteClass;
  * @method static void setTokenWasExchanged()
  * @method static bool tokenWasExchanged()
  * @method static string echo(string $message)
- * @method static void updateUserData(\stdClass $user)
+ * @method static void updateUserData(\stdClass|string $user)
  *
  * @see Equidna\Caronte\Caronte
  */

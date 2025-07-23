@@ -29,10 +29,10 @@ class Caronte
     }
 
     /**
-     * Retrieves the token.
+     * Retrieve and validate the JWT token from the request or storage.
      *
-     * @return Plain The decoded token.
-     * @throws Exception If the token is not found.
+     * @return Plain Validated JWT token instance.
+     * @throws UnauthorizedException If the token is missing or invalid.
      */
     public function getToken(): Plain
     {
@@ -46,23 +46,27 @@ class Caronte
     }
 
     /**
-     * Retrieves the user object from the token claims.
+     * Get the user object from the JWT token claims.
      *
-     * @return stdClass The user object decoded from the token claims.
+     * @return stdClass Decoded user object from token claims.
+     * @throws UnauthorizedException If user claim is missing or invalid.
      */
-    public function getUser(): stdClass|null
+    public function getUser(): stdClass
     {
         try {
             return json_decode($this->getToken()->claims()->get('user'));
         } catch (Exception $e) {
-            return null;
+            throw new UnauthorizedException(
+                message: 'No user provided',
+                previous: $e
+            );
         }
     }
 
     /**
-     * Get the URI user from the current route.
+     * Get the URI user parameter from the current route.
      *
-     * @return string The URI user string.
+     * @return string URI user value or empty string if not present.
      */
     public static function getRouteUser(): string
     {
@@ -70,9 +74,9 @@ class Caronte
     }
 
     /**
-     * Saves the token string and associates it with a randomly generated token ID.
+     * Save the token string and associate it with a persistent token ID in a cookie.
      *
-     * @param string $token_str The token string to be saved.
+     * @param string $token_str Token string to store.
      * @return void
      */
     public function saveToken(string $token_str): void
@@ -82,7 +86,7 @@ class Caronte
 
         Cookie::queue(Cookie::forever(static::COOKIE_NAME, $token_id));
 
-        //if an old token isstored we clear the file first
+        //if an old token is stored we clear the file first
         if (Storage::disk('local')->exists('tokens/' . $token_id)) {
             Storage::disk('local')->delete('tokens/' . $token_id);
         }
@@ -91,7 +95,7 @@ class Caronte
     }
 
     /**
-     * Clears the token.
+     * Clear the stored token and remove the cookie.
      *
      * @return void
      */
@@ -100,15 +104,20 @@ class Caronte
         $this->forgetCookie();
     }
 
+    /**
+     * Mark that the token was exchanged for a new one.
+     *
+     * @return void
+     */
     public function setTokenWasExchanged(): void
     {
         $this->new_token = true;
     }
 
     /**
-     * Check if the token is new.
+     * Check if the token was exchanged during the request lifecycle.
      *
-     * @return bool Returns true if the token is new, false otherwise.
+     * @return bool True if token was exchanged, false otherwise.
      */
     public function tokenWasExchanged(): bool
     {

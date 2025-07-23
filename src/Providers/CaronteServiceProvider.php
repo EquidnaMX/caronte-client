@@ -12,8 +12,8 @@ namespace Equidna\Caronte\Providers;
 
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Routing\Router;
-use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\ServiceProvider;
 use Equidna\Caronte\Caronte;
 use Equidna\Caronte\Console\Commands\NotifyClientConfigurationCommand;
 use Equidna\Toolkit\Exceptions\ConflictException;
