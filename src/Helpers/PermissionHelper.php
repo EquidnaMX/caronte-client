@@ -10,7 +10,7 @@
 namespace Equidna\Caronte\Helpers;
 
 use Equidna\Caronte\Facades\Caronte;
-use Exception;
+use Equidna\Toolkit\Exceptions\UnauthorizedException;
 
 class PermissionHelper
 {
@@ -30,7 +30,7 @@ class PermissionHelper
         $app_id = sha1(config('caronte.APP_ID'));
 
         if (is_null($user)) {
-            throw new Exception('No user provided');
+            throw new UnauthorizedException('No user provided');
         }
 
         $roles = collect($user->roles);
@@ -52,7 +52,7 @@ class PermissionHelper
         $app_id = sha1(config('caronte.APP_ID'));
 
         if (is_null($user)) {
-            throw new Exception('No user provided');
+            throw new UnauthorizedException('No user provided');
         }
 
         if (!is_array($roles)) {

@@ -22,6 +22,9 @@ use Lcobucci\JWT\Validation\Constraint\StrictValidAt;
 use Lcobucci\JWT\Validation\Constraint\SignedWith;
 use Lcobucci\JWT\Validation\Constraint\IssuedBy;
 use Equidna\Caronte\Facades\Caronte;
+use Equidna\Toolkit\Exceptions\BadRequestException;
+use Equidna\Toolkit\Exceptions\NotAcceptableException;
+use Equidna\Toolkit\Exceptions\UnprocessableEntityException;
 use Exception;
 
 class CaronteToken
@@ -51,7 +54,10 @@ class CaronteToken
                 ...static::getConstraints()
             );
         } catch (RequiredConstraintsViolated $e) {
-            throw new Exception($e->getMessage());
+            throw new NotAcceptableException(
+                'The token does not meet the required constraints: ' . $e->getMessage(),
+                $e
+            );
         }
 
         try {
@@ -107,7 +113,10 @@ class CaronteToken
             return $token;
         } catch (RequestException $e) {
             Caronte::clearToken();
-            throw new Exception('Cannot exchange token: ' . $e->response->body());
+            throw new UnprocessableEntityException(
+                'Cannot exchange token: ' . $e->getMessage(),
+                $e
+            );
         }
     }
 
@@ -122,21 +131,21 @@ class CaronteToken
     public static function decodeToken(string $raw_token): Plain
     {
         if (empty($raw_token)) {
-            throw new Exception('Token not provided', 400);
+            throw new BadRequestException('Token not provided');
         }
 
         if (count(explode(".", $raw_token)) != 3) {
-            throw new Exception('Malformed token', 400);
+            throw new BadRequestException('Malformed token');
         }
 
         $token = static::getConfig()->parser()->parse($raw_token);
 
         if (!($token instanceof Plain)) {
-            throw new Exception('Invalid token', 422);
+            throw new BadRequestException('Invalid token');
         }
 
         if (!$token->claims()->has('user')) {
-            throw new Exception('Invalid token', 401);
+            throw new UnprocessableEntityException('Invalid token');
         }
 
         return $token;

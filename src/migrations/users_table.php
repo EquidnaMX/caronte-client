@@ -18,12 +18,28 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('Users', function (Blueprint $table) {
-            $table->string('uri_user', 40)->primary();
-            $table->string('name', 150);
-            $table->string('email', 150);
-            $table->engine = 'InnoDB';
-        });
+        if (!Schema::hasTable('Users')) {
+            Schema::create('Users', function (Blueprint $table) {
+                $table->string('uri_user', 40)->primary();
+                $table->string('name', 150);
+                $table->string('email', 150);
+                $table->engine = 'InnoDB';
+            });
+        } else {
+            Schema::table('Users', function (Blueprint $table) {
+                if (!Schema::hasColumn('Users', 'uri_user')) {
+                    $table->string('uri_user', 40);
+                    // Note: Adding a primary key to an existing table with data may fail
+                }
+                if (!Schema::hasColumn('Users', 'name')) {
+                    $table->string('name', 150);
+                }
+                if (!Schema::hasColumn('Users', 'email')) {
+                    $table->string('email', 150);
+                }
+                $table->engine = 'InnoDB';
+            });
+        }
     }
 
     /**

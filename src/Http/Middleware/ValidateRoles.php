@@ -13,16 +13,31 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Equidna\Toolkit\Helpers\ResponseHelper;
 use Equidna\Caronte\Helpers\PermissionHelper;
+use Equidna\Toolkit\Exceptions\UnauthorizedException;
+use Exception;
 use Closure;
 
 //This class validates if the user has the necessary roles to access a feature.
+// It must be allways used after ValidateSession middleware.
 class ValidateRoles
 {
     public function handle(Request $request, Closure $next, ...$roles): Response
     {
 
-        if (!PermissionHelper::hasRoles(roles: $roles)) {
-            return ResponseHelper::forbidden('User does not have access access to this feature');
+        try {
+            if (!PermissionHelper::hasRoles(roles: $roles)) {
+                return ResponseHelper::forbidden(
+                    message: 'User does not have access access to this feature',
+                    errors: [
+                        'User does not have the required roles: ' . implode(', ', $roles)
+                    ],
+                );
+            }
+        } catch (Exception | UnauthorizedException $e) {
+            return ResponseHelper::unauthorized(
+                message: $e->getMessage(),
+                forward_url: config('caronte.LOGIN_URL')
+            );
         }
 
         return $next($request);

@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Cookie;
 use Lcobucci\JWT\Token\Plain;
 use Equidna\Caronte\Models\CaronteUser;
+use Equidna\Toolkit\Exceptions\UnauthorizedException;
 use Equidna\Toolkit\Helpers\RouteHelper;
 use Exception;
 use stdClass;
@@ -38,7 +39,7 @@ class Caronte
         $token_str = RouteHelper::isAPI() ? request()->bearerToken() : $this->webToken();
 
         if (is_null($token_str) || empty($token_str)) {
-            throw new Exception('Token not found');
+            throw new UnauthorizedException('Token not found');
         }
 
         return CaronteToken::validateToken(raw_token: $token_str);
@@ -189,7 +190,8 @@ class Caronte
                 );
             }
         } catch (Exception $e) {
-            // TODO log error
+            // If this error exists it's beacuse the users migration was not run
+            // No need to log it, just ignore it
         }
     }
 }

@@ -16,6 +16,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Route;
 use Equidna\Caronte\Caronte;
 use Equidna\Caronte\Console\Commands\NotifyClientConfigurationCommand;
+use Equidna\Toolkit\Exceptions\ConflictException;
 
 class CaronteServiceProvider extends ServiceProvider
 {
@@ -32,6 +33,8 @@ class CaronteServiceProvider extends ServiceProvider
 
     public function boot(Router $router)
     {
+        $this->validateCaronteConfig();
+
         //Registers the Caronte alias and facade.
         $loader = AliasLoader::getInstance();
         $loader->alias('Caronte', \Equidna\Caronte\Facades\Caronte::class);
@@ -100,6 +103,41 @@ class CaronteServiceProvider extends ServiceProvider
             $this->commands([
                 NotifyClientConfigurationCommand::class
             ]);
+        }
+    }
+
+    /**
+     * Validates required Caronte config values and fails early with a clear message.
+     *
+     * @throws \RuntimeException
+     */
+    protected function validateCaronteConfig(): void
+    {
+        $required = [
+            'caronte.URL',
+            'caronte.VERSION',
+            'caronte.APP_ID',
+            'caronte.APP_SECRET',
+            'caronte.LOGIN_URL',
+        ];
+
+        $missing = [];
+        foreach ($required as $key) {
+            $value = config($key);
+            if (is_null($value) || $value === '') {
+                $missing[] = $key;
+            }
+        }
+
+        if (config('caronte.ENFORCE_ISSUER')) {
+            if (empty(config('caronte.ISSUER_ID'))) {
+                $missing[] = 'caronte.ISSUER_ID';
+            }
+        }
+
+        if (!empty($missing)) {
+            $msg = "Caronte: Missing required configuration: " . implode(', ', $missing) . ". Please check your .env and config/caronte.php.";
+            throw new ConflictException($msg);
         }
     }
 }

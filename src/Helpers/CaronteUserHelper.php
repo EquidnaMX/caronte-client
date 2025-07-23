@@ -24,7 +24,7 @@ class CaronteUserHelper
      * Retrieves the name of a user based on the provided URI.
      *
      * @param string $uri_user The URI of the user.
-     * @return string The name of the user.
+     * @return string The name of the user or `User not found` user does not exists.
      */
     public static function getUserName(string $uri_user): string
     {
@@ -41,7 +41,7 @@ class CaronteUserHelper
      * Retrieves the email of a user based on the provided URI.
      *
      * @param string $uri_user The URI of the user.
-     * @return string The email of the user.
+     * @return string The email of the user  or `User not found` user does not exists.
      */
     public static function getUserEmail(string $uri_user): string
     {

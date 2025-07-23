@@ -13,9 +13,9 @@
   "require": {
     "php": "^8.0",
     "illuminate/support": "^10.0 || ^11.0 || ^12.0",
-    "equidna/toolkit": "dev-master",
     "lcobucci/jwt": "^5.3",
-    "lcobucci/clock": "^3.2"
+    "lcobucci/clock": "^3.2",
+    "equidna/toolkit": "^0.6.3"
   },
   "require-dev": {
     "illuminate/support": "^10.0 || ^11.0 || ^12.0",

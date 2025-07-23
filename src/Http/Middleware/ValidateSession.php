@@ -17,6 +17,7 @@ use Equidna\Toolkit\Helpers\ResponseHelper;
 use Equidna\Toolkit\Helpers\RouteHelper;
 use Exception;
 use Closure;
+use Equidna\Toolkit\Exceptions\UnauthorizedException;
 
 //This class validates the presence of a caronte token in the request and checks if the user has access to the application.
 class ValidateSession
@@ -25,18 +26,21 @@ class ValidateSession
     {
         try {
             $token = Caronte::getToken();
-        } catch (Exception $e) {
+
+            if (PermissionHelper::hasApplication()) {
+                $response = $next($request);
+            } else {
+                $response = ResponseHelper::forbidden(
+                    message: 'User does not have access to this application',
+                    errors: [
+                        'User does not have access to this application'
+                    ],
+                    forward_url: config('caronte.LOGIN_URL')
+                );
+            }
+        } catch (Exception | UnauthorizedException $e) {
             return ResponseHelper::unauthorized(
                 message: $e->getMessage(),
-                forward_url: config('caronte.LOGIN_URL')
-            );
-        }
-
-        if (PermissionHelper::hasApplication()) {
-            $response = $next($request);
-        } else {
-            $response = ResponseHelper::forbidden(
-                message: 'User does not have access to this application',
                 forward_url: config('caronte.LOGIN_URL')
             );
         }
