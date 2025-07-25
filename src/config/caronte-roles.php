@@ -3,7 +3,7 @@
 /**
  * @author Gabriel Ruelas
  * @license MIT
- * @version 1.1.0
+ * @version 1.3.1
  *
  * Roles on this file are updated on the Caronte server when the command caronte:notify-client-configuration is executed.
  * This Roles will be available for asignement after they are published.

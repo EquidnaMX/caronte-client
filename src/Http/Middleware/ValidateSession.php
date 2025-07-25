@@ -3,7 +3,7 @@
 /**
  * @author Gabriel Ruelas
  * @license MIT
- * @version 1.0.0
+ * @version 1.3.1
  *
  */
 
@@ -24,7 +24,7 @@ use Equidna\Toolkit\Exceptions\UnauthorizedException;
  *
  * @author Gabriel Ruelas
  * @license MIT
- * @version 1.0.0
+ * @version 1.3.1
  */
 class ValidateSession
 {
