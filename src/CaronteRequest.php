@@ -1,6 +1,8 @@
 <?php
 
 /**
+ * Handles requests to the Caronte server for authentication and user management.
+ *
  * @author Gabriel Ruelas
  * @license MIT
  * @version 1.3.2
@@ -37,6 +39,7 @@ class CaronteRequest
      *
      * @param Request $request HTTP request with user credentials and callback URL.
      * @return JsonResponse|RedirectResponse API response or redirect response.
+     * @throws UnauthorizedException If authentication fails.
      */
     public static function userPasswordLogin(Request $request): JsonResponse|RedirectResponse
     {
@@ -92,6 +95,7 @@ class CaronteRequest
      *
      * @param Request $request HTTP request with email and callback URL.
      * @return JsonResponse|RedirectResponse API response or redirect response.
+     * @throws UnauthorizedException If the request fails.
      */
     public static function twoFactorTokenRequest(Request $request): JsonResponse|RedirectResponse
     {
@@ -133,6 +137,7 @@ class CaronteRequest
      * @param Request $request HTTP request object.
      * @param string $token Two-factor authentication token.
      * @return JsonResponse|RedirectResponse API response or redirect response.
+     * @throws UnauthorizedException If authentication fails.
      */
     public static function twoFactorTokenLogin(Request $request, string $token): JsonResponse|RedirectResponse
     {
@@ -186,6 +191,7 @@ class CaronteRequest
      *
      * @param Request $request HTTP request with user email.
      * @return JsonResponse|RedirectResponse API response or redirect response.
+     * @throws BadRequestException If the request fails.
      */
     public static function passwordRecoverRequest(Request $request): JsonResponse|RedirectResponse
     {
@@ -226,6 +232,7 @@ class CaronteRequest
      *
      * @param string $token Password recovery token.
      * @return JsonResponse|View API response or view.
+     * @throws UnauthorizedException If validation fails.
      */
     public static function passwordRecoverTokenValidation(string $token): JsonResponse|View
     {
@@ -268,6 +275,7 @@ class CaronteRequest
      * @param Request $request HTTP request with new password.
      * @param string $token Password recovery token.
      * @return JsonResponse|RedirectResponse API response or redirect response.
+     * @throws UnauthorizedException If recovery fails.
      */
     public static function passwordRecover(Request $request, string $token): JsonResponse|RedirectResponse
     {
@@ -308,6 +316,7 @@ class CaronteRequest
      *
      * @param bool $logout_all_sessions Whether to log out from all sessions (default: false).
      * @return JsonResponse|RedirectResponse API response or redirect response.
+     * @throws BadRequestException If logout fails.
      */
     public static function logout(bool $logout_all_sessions = false): JsonResponse|RedirectResponse
     {

@@ -2,8 +2,36 @@
 
 A robust PHP library for JWT-based authentication and permission management, purpose-built for Laravel applications. Caronte Client streamlines secure user authentication, role-based access control, and seamless integration with modern Laravel projects.
 
-[!NOTE]
-Caronte Client supports Laravel 10.x, 11.x, and 12.x. PHP 8.0 or higher is required.
+> **Note:** Caronte Client supports Laravel 10.x, 11.x, and 12.x. PHP 8.0 or higher is required.
+
+## Coding Standards
+
+- Follows PSR-12 with a 250-character line limit
+- Uses 4-space indentation, LF line endings, and a final newline
+- StyleCI uses the Laravel preset (see `.gitattributes` and `ruleset.xml`)
+- Classes use StudlyCase; methods and variables use camelCase
+- Functions are documented with PHPDoc and type hints
+
+## Blade Message Handling
+
+The package supports displaying messages in views using both session variables and base64-encoded request parameters:
+
+- Session keys: `error`, `warning`, `success`, `info`, `message`
+- Request parameters: `_err`, `_war`, `_suc` (base64-encoded)
+
+Example usage in Blade:
+
+```blade
+@if (app('request')->input('_err'))
+    <div class="alert alert-danger">{{ base64_decode(app('request')->input('_err')) }}</div>
+@endif
+```
+
+This allows for flexible error and success message display after redirects or API calls.
+
+## Error Handling & Message Display
+
+Error and success messages are displayed in views using session variables and base64-encoded request parameters. See Blade Message Handling above for details. Always validate and sanitize user input before displaying.
 
 ---
 

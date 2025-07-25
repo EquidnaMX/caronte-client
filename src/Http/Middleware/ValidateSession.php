@@ -15,9 +15,9 @@ use Equidna\Caronte\Facades\Caronte;
 use Equidna\Caronte\Helpers\PermissionHelper;
 use Equidna\Toolkit\Helpers\ResponseHelper;
 use Equidna\Toolkit\Helpers\RouteHelper;
+use Equidna\Toolkit\Exceptions\UnauthorizedException;
 use Exception;
 use Closure;
-use Equidna\Toolkit\Exceptions\UnauthorizedException;
 
 /**
  * Middleware to validate the presence of a Caronte token and user access to the application.
