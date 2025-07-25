@@ -1,6 +1,4 @@
-@extends('caronte::base')
 
-@section('content')    
     <form method="POST">
         @csrf
         <div class="Wrapper__Login d-flex justify-content-center">
@@ -33,4 +31,3 @@
             </div>
         </div>
     </form>    
-@endsection
