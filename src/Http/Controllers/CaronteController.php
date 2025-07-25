@@ -14,7 +14,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Controller;
 use Equidna\Caronte\CaronteRequest;
 use Equidna\Caronte\Facades\Caronte;
-use Exception;
+use Equidna\Toolkit\Exceptions\UnauthorizedException;
 
 class CaronteController extends Controller
 {
@@ -36,8 +36,8 @@ class CaronteController extends Controller
                         'showFilters' =>  'onlyTitle',
                     ]
                 );*/
-        } catch (Exception  $e) {
-            dd($e->getMessage());
+        } catch (UnauthorizedException  $e) {
+            dd($e);
         }
     }
 
