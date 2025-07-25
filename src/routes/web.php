@@ -16,6 +16,7 @@ use Equidna\Toolkit\Http\Middleware\DisableDebugbar;
 Route::middleware([DisableDebugbar::class])->group(function () {
     Route::get('/login', [CaronteController::class, 'loginForm'])->name('caronte.login.form');
     Route::post('/login', [CaronteController::class, 'login'])->name('caronte.login');
+    Route::get('/logout', [CaronteController::class, 'logout'])->name('caronte.logout');
 
     Route::post('/2fa', [CaronteController::class, 'twoFactorTokenRequest'])->name('caronte.2fa.request');
     Route::get('/2fa/{token}', [CaronteController::class, 'twoFactorTokenLogin'])->name('caronte.2fa.login');
