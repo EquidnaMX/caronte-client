@@ -31,7 +31,7 @@ class CaronteController extends Controller
         $login_view = config('caronte.USE_2FA') ? '2fa-login' : 'login';
 
         try {
-            return View('caronte::' . $login_view);/*
+            return view('caronte::' . $login_view);/*
                 ->with(
                     [
                         'callback_url' => $request->callback_url,
