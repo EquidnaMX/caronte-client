@@ -8,7 +8,6 @@
 
 namespace Equidna\Caronte\Http\Controllers;
 
-use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Http\RedirectResponse;
@@ -16,6 +15,7 @@ use Illuminate\Routing\Controller;
 use Equidna\Caronte\CaronteRequest;
 use Equidna\Caronte\Facades\Caronte;
 use Exception;
+use Illuminate\View\View;
 use Throwable;
 
 class CaronteController extends Controller
@@ -26,7 +26,7 @@ class CaronteController extends Controller
      * @param Request $request HTTP request object.
      * @return View Login form view.
      */
-    public function loginForm(Request $request): View|Response|RedirectResponse
+    public function loginForm(Request $request): View
     {
         $login_view = config('caronte.USE_2FA') ? '2fa-login' : 'login';
 
