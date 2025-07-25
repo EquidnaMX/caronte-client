@@ -14,7 +14,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Controller;
 use Equidna\Caronte\CaronteRequest;
 use Equidna\Caronte\Facades\Caronte;
-use Equidna\Toolkit\Exceptions\UnauthorizedException;
+use Illuminate\View\View;
 
 class CaronteController extends Controller
 {
@@ -24,21 +24,15 @@ class CaronteController extends Controller
      * @param Request $request HTTP request object.
      * @return View Login form view.
      */
-    public function loginForm(Request $request)
+    public function loginForm(Request $request): View
     {
         $login_view = config('caronte.USE_2FA') ? '2fa-login' : 'login';
-
-        try {
-            return view('caronte::' . $login_view);/*
-                ->with(
-                    [
-                        'callback_url' => $request->callback_url,
-                        'showFilters' =>  'onlyTitle',
-                    ]
-                );*/
-        } catch (UnauthorizedException  $e) {
-            dd($e);
-        }
+        return view('caronte::' . $login_view)
+            ->with(
+                [
+                    'callback_url' => $request->callback_url,
+                ]
+            );
     }
 
     /**
