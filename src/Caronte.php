@@ -34,12 +34,12 @@ class Caronte
      * @return Plain Validated JWT token instance.
      * @throws UnauthorizedException If the token is missing or invalid.
      */
-    public function getToken(): Plain
+    public function getToken(): ?Plain
     {
         $token_str = RouteHelper::isAPI() ? request()->bearerToken() : $this->webToken();
 
         if (is_null($token_str) || empty($token_str)) {
-            throw new UnauthorizedException('Token not found');
+            return null;
         }
 
         return CaronteToken::validateToken(raw_token: $token_str);
@@ -51,10 +51,10 @@ class Caronte
      * @return stdClass Decoded user object from token claims.
      * @throws UnauthorizedException If user claim is missing or invalid.
      */
-    public function getUser(): stdClass
+    public function getUser(): ?stdClass
     {
         try {
-            return json_decode($this->getToken()->claims()->get('user'));
+            return json_decode($this->getToken()?->claims()?->get('user')) ?? null;
         } catch (Exception $e) {
             throw new UnauthorizedException(
                 message: 'No user provided',
