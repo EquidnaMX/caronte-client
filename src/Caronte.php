@@ -56,9 +56,9 @@ class Caronte
         try {
             return json_decode($this->getToken()->claims()->get('user'));
         } catch (Exception $e) {
-            dd($e->getMessage());
             throw new UnauthorizedException(
                 message: 'No user provided',
+                errors: $e->getMessage(),
                 previous: $e
             );
         }
