@@ -1,4 +1,4 @@
-# Caronte Client v1.3.1
+# Caronte Client v1.3.2
 
 A robust PHP library for JWT-based authentication and permission management, purpose-built for Laravel applications. Caronte Client streamlines secure user authentication, role-based access control, and seamless integration with modern Laravel projects.
 

@@ -5,7 +5,7 @@
  *
  * @author Gabriel Ruelas
  * @license MIT
- * @version 1.3.1
+ * @version 1.3.2
  */
 
 namespace Equidna\Caronte\Console\Commands;

@@ -1,16 +1,15 @@
 <?php
 
-//TODO FIX FOR V1.3.1  THROW EXCEPTIONS INSTEAD OF RETURNING RESPONSES
 /**
  * @author Gabriel Ruelas
  * @license MIT
- * @version 1.3.1
+ * @version 1.3.2
  */
 
 namespace Equidna\Caronte;
 
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
@@ -18,6 +17,8 @@ use Illuminate\Contracts\View\View;
 use Equidna\Toolkit\Helpers\RouteHelper;
 use Equidna\Toolkit\Helpers\ResponseHelper;
 use Equidna\Caronte\Facades\Caronte;
+use Equidna\Toolkit\Exceptions\BadRequestException;
+use Equidna\Toolkit\Exceptions\UnauthorizedException;
 use Exception;
 
 /**
@@ -35,9 +36,9 @@ class CaronteRequest
      * Log in a user with email and password.
      *
      * @param Request $request HTTP request with user credentials and callback URL.
-     * @return Response|RedirectResponse API response or redirect response.
+     * @return JsonResponse|RedirectResponse API response or redirect response.
      */
-    public static function userPasswordLogin(Request $request): Response|RedirectResponse
+    public static function userPasswordLogin(Request $request): JsonResponse|RedirectResponse
     {
         $decoded_url  = base64_decode($request->callback_url);
 
@@ -66,28 +67,33 @@ class CaronteRequest
             }
 
             $token  = CaronteToken::validateToken(raw_token: $caronte_response->body());
-        } catch (RequestException $e) {
-            return ResponseHelper::badRequest(message: $e->response->body());
-        } catch (Exception $e) {
-            return ResponseHelper::unauthorized($e->getMessage());
+        } catch (RequestException | Exception $e) {
+            throw new UnauthorizedException(
+                message: $e->getMessage(),
+                previous: $e
+            );
         }
 
-        if (RouteHelper::isAPI()) {
-            return response($token->toString(), 200);
+        if (RouteHelper::isWeb()) {
+            Caronte::saveToken($token->toString());
         }
 
-        Caronte::saveToken($token->toString());
-
-        return redirect($callback_url)->with(['success' => 'Sesión iniciada con éxito']);
+        return ResponseHelper::success(
+            message: 'Login successful',
+            data: [
+                'token' => $token->toString(),
+            ],
+            forward_url: $callback_url
+        );
     }
 
     /**
      * Send a two-factor authentication token request.
      *
      * @param Request $request HTTP request with email and callback URL.
-     * @return Response|RedirectResponse API response or redirect response.
+     * @return JsonResponse|RedirectResponse API response or redirect response.
      */
-    public static function twoFactorTokenRequest(Request $request): Response|RedirectResponse
+    public static function twoFactorTokenRequest(Request $request): JsonResponse|RedirectResponse
     {
         try {
             $caronte_response = HTTP::withOptions(
@@ -108,17 +114,17 @@ class CaronteRequest
             }
 
             $response = $caronte_response->body();
-        } catch (RequestException $e) {
-            return ResponseHelper::badRequest($e->response->body());
-        } catch (Exception $e) {
-            return ResponseHelper::badRequest($e->getMessage());
+        } catch (RequestException | Exception $e) {
+            throw new UnauthorizedException(
+                message: $e->getMessage(),
+                previous: $e
+            );
         }
 
-        if (RouteHelper::isAPI()) {
-            return response($response, 200);
-        }
-
-        return redirect(config('caronte.LOGIN_URL'))->with(['success' => $response]);
+        return ResponseHelper::success(
+            message: $response,
+            forward_url: config('caronte.LOGIN_URL')
+        );
     }
 
     /**
@@ -126,9 +132,9 @@ class CaronteRequest
      *
      * @param Request $request HTTP request object.
      * @param string $token Two-factor authentication token.
-     * @return Response|RedirectResponse API response or redirect response.
+     * @return JsonResponse|RedirectResponse API response or redirect response.
      */
-    public static function twoFactorTokenLogin(Request $request, string $token): Response|RedirectResponse
+    public static function twoFactorTokenLogin(Request $request, string $token): JsonResponse|RedirectResponse
     {
         $decoded_url  = base64_decode($request->callback_url);
 
@@ -155,28 +161,33 @@ class CaronteRequest
             }
 
             $token = CaronteToken::validateToken(raw_token: $caronte_response->body());
-        } catch (RequestException $e) {
-            return ResponseHelper::badRequest($e->response->body());
-        } catch (Exception $e) {
-            return ResponseHelper::unauthorized($e->getMessage());
+        } catch (RequestException | Exception $e) {
+            throw new UnauthorizedException(
+                message: $e->getMessage(),
+                previous: $e
+            );
         }
 
-        if (RouteHelper::isAPI()) {
-            return response($token->toString(), 200);
+        if (RouteHelper::isWeb()) {
+            Caronte::saveToken($token->toString());
         }
 
-        Caronte::saveToken($token->toString());
-
-        return redirect($callback_url)->with('success', 'Sesión iniciada con éxito');
+        return ResponseHelper::success(
+            message: 'Login successful',
+            data: [
+                'token' => $token->toString(),
+            ],
+            forward_url: $callback_url
+        );
     }
 
     /**
      * Initiate password recovery for a user.
      *
      * @param Request $request HTTP request with user email.
-     * @return Response|RedirectResponse API response or redirect response.
+     * @return JsonResponse|RedirectResponse API response or redirect response.
      */
-    public static function passwordRecoverRequest(Request $request): Response|RedirectResponse
+    public static function passwordRecoverRequest(Request $request): JsonResponse|RedirectResponse
     {
         try {
             $caronte_response = HTTP::withOptions(
@@ -197,26 +208,26 @@ class CaronteRequest
             }
 
             $response = $caronte_response->body();
-        } catch (RequestException $e) {
-            return ResponseHelper::badRequest($e->response->body());
-        } catch (Exception $e) {
-            return ResponseHelper::badRequest($e->getMessage());
+        } catch (RequestException | Exception $e) {
+            throw new BadRequestException(
+                message: $e->getMessage(),
+                previous: $e
+            );
         }
 
-        if (RouteHelper::isAPI()) {
-            return response($response, 200);
-        }
-
-        return redirect(config('caronte.LOGIN_URL'))->with(['success' => $response]);
+        return ResponseHelper::success(
+            message: $response,
+            forward_url: config('caronte.LOGIN_URL')
+        );
     }
 
     /**
      * Validate a password recovery token.
      *
      * @param string $token Password recovery token.
-     * @return Response|RedirectResponse|View API response, redirect, or view.
+     * @return JsonResponse|View API response or view.
      */
-    public static function passwordRecoverTokenValidation(string $token): Response|RedirectResponse|View
+    public static function passwordRecoverTokenValidation(string $token): JsonResponse|View
     {
         try {
             $caronte_response = HTTP::withOptions(
@@ -232,14 +243,18 @@ class CaronteRequest
             }
 
             $response = $caronte_response->body();
-        } catch (RequestException $e) {
-            return ResponseHelper::badRequest($e->response->body());
-        } catch (Exception $e) {
-            return ResponseHelper::badRequest($e->getMessage());
+        } catch (RequestException | Exception $e) {
+            throw new UnauthorizedException(
+                message: $e->getMessage(),
+                previous: $e
+            );
         }
 
         if (RouteHelper::isAPI()) {
-            return response($response, 200);
+            return ResponseHelper::success(
+                message: 'Token validated successfully',
+                data: $response
+            );
         }
 
         $token_response = json_decode($response);
@@ -252,9 +267,9 @@ class CaronteRequest
      *
      * @param Request $request HTTP request with new password.
      * @param string $token Password recovery token.
-     * @return Response|RedirectResponse API response or redirect response.
+     * @return JsonResponse|RedirectResponse API response or redirect response.
      */
-    public static function passwordRecover(Request $request, string $token): Response|RedirectResponse
+    public static function passwordRecover(Request $request, string $token): JsonResponse|RedirectResponse
     {
         try {
             $caronte_response = HTTP::withOptions(
@@ -274,26 +289,27 @@ class CaronteRequest
             }
 
             $response = $caronte_response->body();
-        } catch (RequestException $e) {
-            return ResponseHelper::badRequest($e->response->body());
-        } catch (Exception $e) {
-            return ResponseHelper::badRequest($e->getMessage());
+        } catch (RequestException | Exception $e) {
+            throw new UnauthorizedException(
+                message: $e->getMessage(),
+                previous: $e
+            );
         }
 
-        if (RouteHelper::isAPI()) {
-            return response($response, 200);
-        }
-
-        return redirect(config('caronte.LOGIN_URL'))->with(['success' => $response]);
+        return ResponseHelper::success(
+            message: 'Password recovered successfully',
+            data: $response,
+            forward_url: config('caronte.LOGIN_URL')
+        );
     }
 
     /**
      * Log out the user and clear the token.
      *
      * @param bool $logout_all_sessions Whether to log out from all sessions (default: false).
-     * @return Response|RedirectResponse API response or redirect response.
+     * @return JsonResponse|RedirectResponse API response or redirect response.
      */
-    public static function logout(bool $logout_all_sessions = false): Response|RedirectResponse
+    public static function logout(bool $logout_all_sessions = false): JsonResponse|RedirectResponse
     {
         try {
             $caronte_response = HTTP::withOptions(
@@ -313,19 +329,20 @@ class CaronteRequest
             }
 
             $response = $caronte_response->body();
-        } catch (RequestException $e) {
-            return ResponseHelper::badRequest($e->response->body());
-        } catch (Exception $e) {
-            return ResponseHelper::unauthorized($e->getMessage());
+        } catch (RequestException | Exception $e) {
+            throw new BadRequestException(
+                message: $e->getMessage(),
+                previous: $e
+            );
         }
 
         Caronte::clearToken();
 
-        if (RouteHelper::isAPI()) {
-            return response($response, 200);
-        }
-
-        return redirect(config('caronte.LOGIN_URL'))->with(['success' => $response]);
+        return ResponseHelper::success(
+            message: 'Logout successful',
+            data: $response,
+            forward_url: config('caronte.LOGIN_URL')
+        );
     }
 
     /**
