@@ -15,8 +15,6 @@ use Illuminate\Routing\Controller;
 use Equidna\Caronte\CaronteRequest;
 use Equidna\Caronte\Facades\Caronte;
 use Exception;
-use Illuminate\View\View;
-use Throwable;
 
 class CaronteController extends Controller
 {
@@ -26,8 +24,9 @@ class CaronteController extends Controller
      * @param Request $request HTTP request object.
      * @return View Login form view.
      */
-    public function loginForm(Request $request): View
+    public function loginForm(Request $request)
     {
+        dd("alkajsdhlkasjlkasd");
         $login_view = config('caronte.USE_2FA') ? '2fa-login' : 'login';
 
         try {
@@ -39,7 +38,7 @@ class CaronteController extends Controller
                         'showFilters' =>  'onlyTitle',
                     ]
                 );*/
-        } catch (Throwable  $e) {
+        } catch (Exception  $e) {
             dd($e->getMessage());
         }
     }
