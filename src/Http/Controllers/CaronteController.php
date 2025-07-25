@@ -25,12 +25,12 @@ class CaronteController extends Controller
      * @param Request $request HTTP request object.
      * @return View Login form view.
      */
-    public function loginForm(Request $request): View
+    public function loginForm(Request $request): View|Response|RedirectResponse
     {
         $login_view = config('caronte.USE_2FA') ? '2fa-login' : 'login';
 
         try {
-            dd('caronte::' . $login_view); // This line is for debugging purposes, remove it in production.
+            return response($login_view);
             return View('caronte::' . $login_view);/*
                 ->with(
                     [
