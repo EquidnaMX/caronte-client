@@ -16,6 +16,7 @@ use Illuminate\Routing\Controller;
 use Equidna\Caronte\CaronteRequest;
 use Equidna\Caronte\Facades\Caronte;
 use Exception;
+use Throwable;
 
 class CaronteController extends Controller
 {
@@ -38,7 +39,7 @@ class CaronteController extends Controller
                         'showFilters' =>  'onlyTitle',
                     ]
                 );*/
-        } catch (Exception  $e) {
+        } catch (Throwable  $e) {
             dd($e->getMessage());
         }
     }
