@@ -58,7 +58,7 @@ class Caronte
         } catch (Exception $e) {
             throw new UnauthorizedException(
                 message: 'No user provided',
-                errors: $e->getMessage(),
+                errors: [$e->getMessage()],
                 previous: $e
             );
         }
