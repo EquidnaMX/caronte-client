@@ -37,6 +37,7 @@ class ValidateSession
      */
     public function handle(Request $request, Closure $next): Response
     {
+        dd("VALIDATE");
         try {
             $token = Caronte::getToken();
 
