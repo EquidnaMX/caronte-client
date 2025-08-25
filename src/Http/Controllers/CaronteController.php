@@ -15,6 +15,7 @@ use Illuminate\Routing\Controller;
 use Equidna\Caronte\CaronteRequest;
 use Equidna\Caronte\Facades\Caronte;
 use Illuminate\View\View;
+use Inertia\Response as InertiaResponse;
 
 class CaronteController extends Controller
 {
@@ -24,9 +25,14 @@ class CaronteController extends Controller
      * @param Request $request HTTP request object.
      * @return View Login form view.
      */
-    public function loginForm(Request $request): View
+    public function loginForm(Request $request): View | InertiaResponse
     {
         $login_view = config('caronte.USE_2FA') ? '2fa-login' : 'login';
+
+        if (config('caronte.USE_INERTIA')) {
+            return inertia('Auth/Login');
+        }
+
         return view('caronte::' . $login_view)
             ->with(
                 [

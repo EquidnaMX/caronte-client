@@ -26,5 +26,7 @@ return [
     'SUCCESS_URL'    => env('CARONTE_SUCCESS_URL', '/'),
     'LOGIN_URL'      => env('CARONTE_LOGIN_URL', '/login'),
 
-    'UPDATE_LOCAL_USER' => env('CARONTE_UPDATE_USER', false)
+    'UPDATE_LOCAL_USER' => env('CARONTE_UPDATE_USER', false),
+
+    'USE_INERTIA' => env('CARONTE_USE_INERTIA', false),
 ];
